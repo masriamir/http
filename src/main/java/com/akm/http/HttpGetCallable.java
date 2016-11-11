@@ -17,16 +17,18 @@ import org.apache.http.impl.client.CloseableHttpClient;
  * @author Amir
  */
 final class HttpGetCallable extends AbstractHttpCallable {
-	public HttpGetCallable(final String url, final List<Header> headers, final List<NameValuePair> parameters) {
-		super(url, headers, parameters, HttpGet.METHOD_NAME);
-	}
+    public HttpGetCallable(final String url, final List<Header> headers,
+            final List<NameValuePair> parameters) {
+        super(url, headers, parameters, HttpGet.METHOD_NAME);
+    }
 
-	@Override
-	public CloseableHttpResponse execute(final CloseableHttpClient client) throws IOException {
-		final HttpGet get = new HttpGet(getUrl());
-		addHeaders(get);
-		addRequestParameters(get);
+    @Override
+    public CloseableHttpResponse execute(final CloseableHttpClient client)
+            throws IOException {
+        final HttpGet get = new HttpGet(getUrl());
+        addHeaders(get);
+        addRequestParameters(get);
 
-		return client.execute(get);
-	}
+        return client.execute(get);
+    }
 }

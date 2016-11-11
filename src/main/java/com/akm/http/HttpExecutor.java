@@ -13,11 +13,15 @@ import org.apache.http.impl.client.CloseableHttpClient;
  * @author Amir
  */
 interface HttpExecutor {
-	/**
-	 * Execute an HTTP request using the given client and return the response.
-	 * @param client the provided {@link CloseableHttpClient}
-	 * @return the {@link CloseableHttpResponse}
-	 * @throws IOException if there were any issues executing the request
-	 */
-	CloseableHttpResponse execute(final CloseableHttpClient client) throws IOException;
+    /**
+     * Execute an HTTP request using the given client and return the response.
+     * 
+     * @param client
+     *            the provided {@link CloseableHttpClient}
+     * @return the {@link CloseableHttpResponse}
+     * @throws IOException
+     *             if there were any issues executing the request
+     */
+    CloseableHttpResponse execute(final CloseableHttpClient client)
+            throws IOException;
 }

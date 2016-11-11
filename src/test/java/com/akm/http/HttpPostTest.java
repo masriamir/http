@@ -20,80 +20,90 @@ import com.akm.http.exception.HttpServiceException;
  * @author Amir
  */
 public class HttpPostTest {
-	private HttpService http = null;
-	private static List<Header> headers = null;
-	private static List<NameValuePair> parameters = null;
+    private HttpService http = null;
+    private static List<Header> headers = null;
+    private static List<NameValuePair> parameters = null;
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
-	@Before
-	public void setUp() throws Exception {
-		http = new HttpService();
-		headers = new ArrayList<>();
-		parameters = new ArrayList<>();
-	}
+    @Before
+    public void setUp() throws Exception {
+        http = new HttpService();
+        headers = new ArrayList<>();
+        parameters = new ArrayList<>();
+    }
 
-	@After
-	public void tearDown() throws Exception {
-		http = null;
-		headers = null;
-		parameters = null;
-	}
+    @After
+    public void tearDown() throws Exception {
+        http = null;
+        headers = null;
+        parameters = null;
+    }
 
-	@Test
-	public final void testNullUrl() throws HttpServiceException {
-		TestUtils.nullUrlException(thrown);
-		post(null);
-	}
+    @Test
+    public final void testNullUrl() throws HttpServiceException {
+        TestUtils.nullUrlException(thrown);
+        post(null);
+    }
 
-	@Test
-	public final void testPost() throws HttpServiceException {
-		final HttpResponse resp = post();
-		TestUtils.successResponseAndCode(resp);
-	}
+    @Test
+    public final void testPost() throws HttpServiceException {
+        final HttpResponse resp = post();
+        TestUtils.successResponseAndCode(resp);
+    }
 
-	@Test
-	public final void testPostHeaders() throws HttpServiceException {
-		final HttpResponse resp = post();
-		TestUtils.successResponseAndCode(resp);
-		TestUtils.containsHeaderWithValue(resp, "Content-Type", "application/json");
-	}
+    @Test
+    public final void testPostHeaders() throws HttpServiceException {
+        final HttpResponse resp = post();
+        TestUtils.successResponseAndCode(resp);
+        TestUtils.containsHeaderWithValue(resp, "Content-Type",
+                "application/json");
+    }
 
-	@Test
-	public final void testPostError() throws HttpServiceException {
-		final HttpResponse resp = post(String.format("%st", TestUtils.URL_POST));
-		TestUtils.errorResponseAndCode(resp);
-	}
+    @Test
+    public final void testPostError() throws HttpServiceException {
+        final HttpResponse resp = post(
+                String.format("%st", TestUtils.URL_POST));
+        TestUtils.errorResponseAndCode(resp);
+    }
 
-	@Test
-	public final void testPostStatus() throws HttpServiceException {
-		getStatus(202);
-		getStatus(404);
-		getStatus(502);
-	}
+    @Test
+    public final void testPostStatus() throws HttpServiceException {
+        getStatus(202);
+        getStatus(404);
+        getStatus(502);
+    }
 
-	/**
-	 * Makes a request guaranteed to generate the given status code and verifies the response.
-	 * @param statusCode the status code to generate
-	 * @throws HttpServiceException if any errors occur while executing the request
-	 */
-	private void getStatus(final int statusCode) throws HttpServiceException {
-		final HttpResponse resp = post(String.format("%s%d", TestUtils.URL_STATUS, statusCode));
-		TestUtils.errorResponseWithCode(resp, statusCode);
-	}
+    /**
+     * Makes a request guaranteed to generate the given status code and verifies
+     * the response.
+     * 
+     * @param statusCode
+     *            the status code to generate
+     * @throws HttpServiceException
+     *             if any errors occur while executing the request
+     */
+    private void getStatus(final int statusCode) throws HttpServiceException {
+        final HttpResponse resp = post(
+                String.format("%s%d", TestUtils.URL_STATUS, statusCode));
+        TestUtils.errorResponseWithCode(resp, statusCode);
+    }
 
-	/**
-	 * Performs an HTTP post request on the given url and returns the response.
-	 * @param url the url
-	 * @return the HttpResponse
-	 * @throws HttpServiceException if any errors occur while executing the request
-	 */
-	private HttpResponse post(final String url) throws HttpServiceException {
-		return http.post(url, headers, parameters);
-	}
+    /**
+     * Performs an HTTP post request on the given url and returns the response.
+     * 
+     * @param url
+     *            the url
+     * @return the HttpResponse
+     * @throws HttpServiceException
+     *             if any errors occur while executing the request
+     */
+    private HttpResponse post(final String url) throws HttpServiceException {
+        return http.post(url, headers, parameters);
+    }
 
-	private HttpResponse post() throws HttpServiceException {
-		return post(TestUtils.URL_POST);
-	}
+    private HttpResponse post() throws HttpServiceException {
+        return post(TestUtils.URL_POST);
+    }
 }

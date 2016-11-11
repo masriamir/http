@@ -17,16 +17,18 @@ import org.apache.http.impl.client.CloseableHttpClient;
  * @author Amir
  */
 final class HttpPostCallable extends AbstractHttpCallable {
-	public HttpPostCallable(final String url, final List<Header> headers, final List<NameValuePair> parameters) {
-		super(url, headers, parameters, HttpPost.METHOD_NAME);
-	}
+    public HttpPostCallable(final String url, final List<Header> headers,
+            final List<NameValuePair> parameters) {
+        super(url, headers, parameters, HttpPost.METHOD_NAME);
+    }
 
-	@Override
-	public CloseableHttpResponse execute(final CloseableHttpClient client) throws IOException {
-		final HttpPost post = new HttpPost(getUrl());
-		addHeaders(post);
-		addPostParameters(post);
+    @Override
+    public CloseableHttpResponse execute(final CloseableHttpClient client)
+            throws IOException {
+        final HttpPost post = new HttpPost(getUrl());
+        addHeaders(post);
+        addPostParameters(post);
 
-		return client.execute(post);
-	}
+        return client.execute(post);
+    }
 }

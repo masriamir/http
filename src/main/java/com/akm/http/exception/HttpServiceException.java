@@ -1,25 +1,26 @@
 package com.akm.http.exception;
 
 /**
- * Generic exception thrown when any error occurs while executing an HTTP request.
+ * Generic exception thrown when any error occurs while executing an HTTP
+ * request.
  *
  * @since 0.1
  * @author Amir
  */
 public class HttpServiceException extends Exception {
-	private static final long serialVersionUID = -6276063712137097923L;
+    private static final long serialVersionUID = -6276063712137097923L;
 
-	public HttpServiceException() {}
+    public HttpServiceException() {}
 
-	public HttpServiceException(final String message) {
-		super(message);
-	}
+    public HttpServiceException(final String message) {
+        super(message);
+    }
 
-	public HttpServiceException(final Throwable cause) {
-		super(cause);
-	}
+    public HttpServiceException(final Throwable cause) {
+        super(cause);
+    }
 
-	public HttpServiceException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+    public HttpServiceException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }
