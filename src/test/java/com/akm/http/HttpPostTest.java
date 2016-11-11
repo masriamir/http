@@ -1,16 +1,12 @@
 package com.akm.http;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.Header;
-import org.apache.http.NameValuePair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.akm.http.builder.NameValuePairList;
 import com.akm.http.exception.HttpServiceException;
 
 /**
@@ -21,8 +17,8 @@ import com.akm.http.exception.HttpServiceException;
  */
 public class HttpPostTest {
     private HttpService http = null;
-    private static List<Header> headers = null;
-    private static List<NameValuePair> parameters = null;
+    private static NameValuePairList headers = null;
+    private static NameValuePairList parameters = null;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -30,8 +26,8 @@ public class HttpPostTest {
     @Before
     public void setUp() throws Exception {
         http = new HttpService();
-        headers = new ArrayList<>();
-        parameters = new ArrayList<>();
+        headers = NameValuePairList.getInstance().build();
+        parameters = NameValuePairList.getInstance().build();
     }
 
     @After
@@ -75,10 +71,18 @@ public class HttpPostTest {
         getStatus(502);
     }
 
+    @Test
+    public final void testPostParameters() throws HttpServiceException {
+        parameters = NameValuePairList.getInstance().add("a", "5").add("b", "2")
+                .build();
+        final HttpResponse resp = post();
+        TestUtils.successResponseAndCode(resp);
+    }
+
     /**
      * Makes a request guaranteed to generate the given status code and verifies
      * the response.
-     * 
+     *
      * @param statusCode
      *            the status code to generate
      * @throws HttpServiceException
@@ -92,7 +96,7 @@ public class HttpPostTest {
 
     /**
      * Performs an HTTP post request on the given url and returns the response.
-     * 
+     *
      * @param url
      *            the url
      * @return the HttpResponse

@@ -9,11 +9,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
 import org.junit.rules.ExpectedException;
 
 import com.akm.http.exception.HttpServiceException;
@@ -32,7 +29,7 @@ final class TestUtils {
 
     /**
      * Asserts that the given collection is not null and not empty.
-     * 
+     *
      * @param c
      *            the collection
      * @param name
@@ -45,7 +42,7 @@ final class TestUtils {
 
     /**
      * Asserts that the given map is not null and not empty.
-     * 
+     *
      * @param m
      *            the map
      * @param name
@@ -58,7 +55,7 @@ final class TestUtils {
 
     /**
      * Asserts that the given string is not null and not empty.
-     * 
+     *
      * @param s
      *            the string
      * @param name
@@ -71,7 +68,7 @@ final class TestUtils {
 
     /**
      * Asserts the given response is valid.
-     * 
+     *
      * @param resp
      *            the HttpResponse
      */
@@ -84,7 +81,7 @@ final class TestUtils {
 
     /**
      * Asserts the given response represents a successful request.
-     * 
+     *
      * @param resp
      *            the HttpResponse
      */
@@ -96,7 +93,7 @@ final class TestUtils {
     /**
      * Asserts the given response represents a successful request with an
      * appropriate status code.
-     * 
+     *
      * @param resp
      *            the HttpResponse
      */
@@ -108,7 +105,7 @@ final class TestUtils {
     /**
      * Asserts the given response represents a successful request with the given
      * status code.
-     * 
+     *
      * @param resp
      *            the HttpResponse
      * @param statusCode
@@ -124,7 +121,7 @@ final class TestUtils {
      * Asserts the given response represents a successful request.
      * <p>
      * This method does not make any assertions about the data returned.
-     * 
+     *
      * @param resp
      *            the HttpResponse
      */
@@ -136,7 +133,7 @@ final class TestUtils {
     /**
      * Asserts the given response represents an unsuccessful request with an
      * appropriate status code.
-     * 
+     *
      * @param resp
      *            the HttpResponse
      */
@@ -148,7 +145,7 @@ final class TestUtils {
     /**
      * Asserts the given response represents an unsuccessful request with the
      * given status code.
-     * 
+     *
      * @param resp
      *            the HttpResponse
      * @param statusCode
@@ -162,7 +159,7 @@ final class TestUtils {
 
     /**
      * Asserts the given status codes are equal.
-     * 
+     *
      * @param expected
      *            the expected status code
      * @param actual
@@ -175,7 +172,7 @@ final class TestUtils {
 
     /**
      * Asserts the given status code represents a successful request.
-     * 
+     *
      * @param statusCode
      *            the status code
      */
@@ -185,7 +182,7 @@ final class TestUtils {
 
     /**
      * Asserts the given status code represents an unsuccessful request.
-     * 
+     *
      * @param statusCode
      *            the status code
      */
@@ -195,7 +192,7 @@ final class TestUtils {
 
     /**
      * Asserts the given response contains the given header.
-     * 
+     *
      * @param resp
      *            the HttpResponse
      * @param header
@@ -210,7 +207,7 @@ final class TestUtils {
     /**
      * Asserts the given response contains the given header with the specified
      * value.
-     * 
+     *
      * @param resp
      *            the HttpResponse
      * @param header
@@ -226,23 +223,8 @@ final class TestUtils {
     }
 
     /**
-     * Adds the given header name and value to the specified list of headers.
-     * 
-     * @param headers
-     *            the list of headers
-     * @param name
-     *            the name of the header
-     * @param value
-     *            the value of the header
-     */
-    public static void addHeader(final List<Header> headers, final String name,
-            final String value) {
-        headers.add(new BasicHeader(name, value));
-    }
-
-    /**
      * Expected exception for a null url.
-     * 
+     *
      * @param e
      *            the ExpectedException
      */

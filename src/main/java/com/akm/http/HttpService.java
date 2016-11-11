@@ -2,17 +2,15 @@ package com.akm.http;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.http.Header;
-import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.akm.http.builder.NameValuePairList;
 import com.akm.http.exception.HttpServiceException;
 
 /**
@@ -29,7 +27,7 @@ public final class HttpService {
      * Performs an HTTP GET request to the given url using the specified headers
      * and parameters. If the request is successful an {@link HttpResponse} is
      * returned.
-     * 
+     *
      * @param url
      *            the url to send the request
      * @param headers
@@ -40,8 +38,8 @@ public final class HttpService {
      * @throws HttpServiceException
      *             if any errors occur while executing the request
      */
-    public HttpResponse get(final String url, final List<Header> headers,
-            final List<NameValuePair> parameters) throws HttpServiceException {
+    public HttpResponse get(final String url, final NameValuePairList headers,
+            final NameValuePairList parameters) throws HttpServiceException {
         return doRequest(HttpGetCallable.class, url, headers, parameters);
     }
 
@@ -49,7 +47,7 @@ public final class HttpService {
      * Performs an HTTP POST request to the given url using the specified
      * headers and parameters. If the request is successful an
      * {@link HttpResponse} is returned.
-     * 
+     *
      * @param url
      *            the url to send the request
      * @param headers
@@ -60,14 +58,14 @@ public final class HttpService {
      * @throws HttpServiceException
      *             if any errors occur while executing the request
      */
-    public HttpResponse post(final String url, final List<Header> headers,
-            final List<NameValuePair> parameters) throws HttpServiceException {
+    public HttpResponse post(final String url, final NameValuePairList headers,
+            final NameValuePairList parameters) throws HttpServiceException {
         return doRequest(HttpPostCallable.class, url, headers, parameters);
     }
 
     /**
      * Executes the given {@link AbstractHttpCallable} class using reflection.
-     * 
+     *
      * @param clazz
      *            the class of the AbstractHttpCallable implementation
      * @param url
@@ -81,8 +79,9 @@ public final class HttpService {
      *             if any errors occur while executing the request
      */
     private <T extends AbstractHttpCallable> HttpResponse doRequest(
-            final Class<T> clazz, final String url, final List<Header> headers,
-            final List<NameValuePair> parameters) throws HttpServiceException {
+            final Class<T> clazz, final String url,
+            final NameValuePairList headers, final NameValuePairList parameters)
+            throws HttpServiceException {
         final T callable = getHttpCallable(clazz, url, headers, parameters);
         return execute(callable);
     }
@@ -90,7 +89,7 @@ public final class HttpService {
     /**
      * Creates and submits a new {@link AbstractHttpCallable}, returning the
      * result.
-     * 
+     *
      * @param callable
      *            the AbstractHttpCallable to execute
      * @return the HttpResponse
@@ -127,7 +126,7 @@ public final class HttpService {
      * Uses reflection to instantiate the appropriate
      * {@link AbstractHttpCallable} using the given class and constructor
      * arguments.
-     * 
+     *
      * @param clazz
      *            the class of the AbstractHttpCallable implementation
      * @param url
@@ -141,11 +140,13 @@ public final class HttpService {
      *             if any errors occur while instantiating the class
      */
     private <T extends AbstractHttpCallable> T getHttpCallable(
-            final Class<T> clazz, final String url, final List<Header> headers,
-            final List<NameValuePair> parameters) throws HttpServiceException {
+            final Class<T> clazz, final String url,
+            final NameValuePairList headers, final NameValuePairList parameters)
+            throws HttpServiceException {
         try {
-            final Constructor<T> constructor = clazz
-                    .getConstructor(String.class, List.class, List.class);
+            final Constructor<T> constructor = clazz.getConstructor(
+                    String.class, NameValuePairList.class,
+                    NameValuePairList.class);
             return constructor.newInstance(url, headers, parameters);
         } catch (NoSuchMethodException | SecurityException
                 | InstantiationException | IllegalAccessException
