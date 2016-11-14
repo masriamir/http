@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.http.util.TextUtils;
 import org.junit.rules.ExpectedException;
 
 import com.akm.http.exception.HttpServiceException;
@@ -62,8 +63,7 @@ final class TestUtils {
      *            variable name used in assert message
      */
     public static void notBlank(final String s, final String name) {
-        assertNotNull(String.format("%s is null", name), s);
-        assertFalse(String.format("%s is blank", name), s.isEmpty());
+        assertFalse(String.format("%s is blank", name), TextUtils.isBlank(s));
     }
 
     /**

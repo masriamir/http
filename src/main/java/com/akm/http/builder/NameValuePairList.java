@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.Args;
 
 /**
  * Convenience object for easily generating multiple name value pairs at once.
@@ -38,9 +39,7 @@ public final class NameValuePairList {
      * @return the generated NameValuePairList
      */
     public static NameValuePairList fromMap(final Map<String, String> map) {
-        if (map == null) {
-            throw new IllegalArgumentException("map may not be null");
-        }
+        Args.notNull(map, "map");
 
         final Builder builder = NameValuePairList.getInstance();
 
@@ -73,6 +72,7 @@ public final class NameValuePairList {
          * @return the Builder
          */
         public Builder add(final String name, final String value) {
+            Args.notBlank(name, "name");
             nvps.add(new BasicNameValuePair(name, value));
             return this;
         }

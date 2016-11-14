@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.Args;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,18 +72,10 @@ abstract class AbstractHttpCallable
     public AbstractHttpCallable(final String url,
             final NameValuePairList headers, final NameValuePairList parameters,
             final String method) {
-        if (url == null || url.isEmpty()) {
-            throw new IllegalArgumentException("url may not be empty");
-        }
-
-        if (method == null || method.isEmpty()) {
-            throw new IllegalArgumentException("method may not be empty");
-        }
-
-        this.url = url;
+        this.url = Args.notBlank(url, "url");
         this.headers = headers;
         this.parameters = parameters;
-        this.method = method;
+        this.method = Args.notBlank(method, "method");
     }
 
     @Override
