@@ -2,6 +2,8 @@ package com.akm.http.builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Convenience object for easily generating multiple name value pairs at once.
@@ -23,6 +25,27 @@ public final class NameValuePairList {
      */
     public static Builder getInstance() {
         return new Builder();
+    }
+
+    /**
+     * Generates a NameValuePairList from the given map.
+     *
+     * @param map
+     *            the map to construct the NameValuePairList from
+     * @return the generated NameValuePairList
+     */
+    public static NameValuePairList fromMap(final Map<String, String> map) {
+        if (map == null) {
+            throw new IllegalArgumentException("map may not be null");
+        }
+
+        final Builder builder = NameValuePairList.getInstance();
+
+        for (final Entry<String, String> entry : map.entrySet()) {
+            builder.add(entry.getKey(), entry.getValue());
+        }
+
+        return builder.build();
     }
 
     public static class Builder implements BuilderPattern<NameValuePairList> {
