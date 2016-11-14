@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 /**
  * Convenience object for easily generating multiple name value pairs at once.
  *
@@ -70,7 +73,7 @@ public final class NameValuePairList {
          * @return the Builder
          */
         public Builder add(final String name, final String value) {
-            nvps.add(new NameValuePair(name, value));
+            nvps.add(new BasicNameValuePair(name, value));
             return this;
         }
     }
