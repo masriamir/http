@@ -3,7 +3,7 @@ package com.akm.http;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import org.apache.http.HttpEntity;
@@ -128,7 +128,7 @@ abstract class AbstractHttpCallable
      *            an {@link HttpRequest} object
      */
     protected void addHeaders(final HttpRequest request) {
-        if (validList(headers.getNvps())) {
+        if (notEmpty(headers.getNvps())) {
             for (final NameValuePair nvp : headers.getNvps()) {
                 LOGGER.debug("setting the following header: {}={}",
                         nvp.getName(), nvp.getValue());
@@ -144,7 +144,7 @@ abstract class AbstractHttpCallable
      *            an {@link HttpEntityEnclosingRequest} object
      */
     protected void addPostParameters(final HttpEntityEnclosingRequest request) {
-        if (validList(parameters.getNvps())) {
+        if (notEmpty(parameters.getNvps())) {
             LOGGER.debug("setting the following entity parameters: {}",
                     parameters.getNvps());
             request.setEntity(new UrlEncodedFormEntity(parameters.getNvps(),
@@ -159,7 +159,7 @@ abstract class AbstractHttpCallable
      *            an {@link HttpRequestBase} object
      */
     protected void addRequestParameters(final HttpRequestBase request) {
-        if (validList(parameters.getNvps())) {
+        if (notEmpty(parameters.getNvps())) {
             try {
                 final URIBuilder uriBuilder = new URIBuilder(url);
 
@@ -193,13 +193,13 @@ abstract class AbstractHttpCallable
     }
 
     /**
-     * Checks if the given list is not null and not empty.
+     * Checks if the given collection is not null and not empty.
      *
-     * @param list
-     *            the list to check
-     * @return true if list is not null and not empty, false otherwise
+     * @param collection
+     *            the collection to check
+     * @return true if the collection is not null and not empty, false otherwise
      */
-    private <T> boolean validList(final List<T> list) {
-        return list != null && !list.isEmpty();
+    private <E, T extends Collection<E>> boolean notEmpty(final T collection) {
+        return collection != null && !collection.isEmpty();
     }
 }
