@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 /**
- * Provides test cases for NameValuePairList functionality
+ * Provides test cases for NameValuePairList functionality.
  *
  * @since 0.2
  * @author Amir

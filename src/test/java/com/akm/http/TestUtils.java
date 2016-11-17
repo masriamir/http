@@ -22,7 +22,7 @@ import com.akm.http.exception.HttpServiceException;
  * @since 0.1
  * @author Amir
  */
-final class TestUtils {
+public final class TestUtils {
     static final String URL_POST = "https://httpbin.org/post";
     static final String URL_GET = "https://httpbin.org/get";
     static final String URL_STATUS = "https://httpbin.org/status/";
