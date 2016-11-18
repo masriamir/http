@@ -9,6 +9,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -38,6 +40,22 @@ public class BeanUtilTest {
     @After
     public void tearDown() throws Exception {
         dummy = null;
+    }
+
+    @Test
+    public final void testIterator() {
+        BeanUtil.iterator(dummy.getClass().getDeclaredFields(), f -> true,
+                System.out::println);
+    }
+
+    @Test
+    public final void testCollector() {
+        final List<Field> fields = BeanUtil.collector(
+                dummy.getClass().getDeclaredFields(), f -> true,
+                Collectors.toList());
+        TestUtils.notEmpty(fields, "fields");
+        assertEquals("fields has invalid size", 3, fields.size());
+        assertEquals("field name is invalid", "id", fields.get(0).getName());
     }
 
     @Test

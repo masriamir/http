@@ -2,8 +2,13 @@ package com.akm.http.util;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collector;
 
 /**
  * Bean utility functions using reflection.
@@ -12,6 +17,40 @@ import java.lang.reflect.Method;
  * @author Amir
  */
 public final class BeanUtil {
+    /**
+     * Iterates over the given {@link AccessibleObject} array using the provided
+     * Predicate and Consumer.
+     *
+     * @param objs
+     *            the array of AccessibleObjects
+     * @param predicate
+     *            the Predicate used to filter the array
+     * @param consumer
+     *            the Consumer to apply to each element
+     */
+    public static <T extends AccessibleObject> void iterator(final T[] objs,
+            final Predicate<T> predicate, final Consumer<T> consumer) {
+        Arrays.stream(objs).parallel().filter(predicate).forEach(consumer);
+    }
+
+    /**
+     * Collects the given {@link AccessibleObject} array using the provided
+     * Predicate and Collector.
+     *
+     * @param objs
+     *            the array of AccessibleObjects
+     * @param predicate
+     *            the Predicate used to filter the array
+     * @param collector
+     *            the Collector to use for reducing the elements
+     * @return the result of the reduction
+     */
+    public static <T extends AccessibleObject, A, R> R collector(final T[] objs,
+            final Predicate<T> predicate, final Collector<T, A, R> collector) {
+        return Arrays.stream(objs).parallel().filter(predicate)
+                .collect(collector);
+    }
+
     /**
      * Gets a {@link PropertyDescriptor} from the given class with the given
      * field name.
