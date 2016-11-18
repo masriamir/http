@@ -17,12 +17,12 @@ import com.akm.http.TestUtils;
  * @since 0.3
  * @author Amir
  */
-public class RequestTranslatorTest {
+public class RequestObjectTest {
     private TestRequestObject tro = null;
 
     @Before
     public void setUp() throws Exception {
-        tro = new TestRequestObject("swkj-22984", 5, "help");
+        tro = new TestRequestObject("swkj-22984", 5, "help", true);
     }
 
     @After
@@ -34,17 +34,20 @@ public class RequestTranslatorTest {
     public final void testTranslate() {
         final Map<String, String> map = tro.translate();
         TestUtils.notEmpty(map, "map");
-        assertEquals("map size is not 2", 2, map.size());
+        assertEquals("map size is not 3", 3, map.size());
         assertTrue("api_user_key key is missing",
                 map.containsKey("api_user_key"));
         assertTrue("limit key is missing", map.containsKey("limit"));
+        assertTrue("delete_on_error key is missing",
+                map.containsKey("delete_on_error"));
         assertEquals("api_user_key is invalid", "swkj-22984",
                 map.get("api_user_key"));
         assertEquals("limit is invalid", "5", map.get("limit"));
+        assertEquals("delete_on_error is invalid", "true",
+                map.get("delete_on_error"));
     }
 
-    public static final class TestRequestObject
-            extends AbstractRequestTranslator {
+    public static final class TestRequestObject implements RequestObject {
         @RequestParameter("api_user_key")
         private String userId;
 
@@ -53,11 +56,15 @@ public class RequestTranslatorTest {
 
         private String unused;
 
+        @RequestParameter("delete_on_error")
+        public Boolean deleteOnError;
+
         public TestRequestObject(final String userId, final Integer limit,
-                final String unused) {
+                final String unused, final Boolean deleteOnError) {
             this.userId = userId;
             this.limit = limit;
             this.unused = unused;
+            this.deleteOnError = deleteOnError;
         }
 
         public String getUserId() {
