@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -35,23 +34,24 @@ public abstract class AbstractRequestTranslator implements RequestTranslator {
     public Map<String, String> translate()
             throws HttpRequestTranslationException {
         final Map<String, String> map = new HashMap<>();
-        final List<Field> fields = Arrays
-                .asList(getClass().getDeclaredFields());
 
-        fields.parallelStream().filter(IS_ANNOTATED).forEach(field -> {
-            try {
-                final String name = field.getAnnotation(RequestParameter.class)
-                        .value();
-                final String value = BeanUtil
-                        .invokeGetter(field.getName(), getClass(), this)
-                        .toString();
-                map.put(name, value);
-            } catch (IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException | IntrospectionException e) {
-                throw new HttpRequestTranslationException(
-                        "unable to translate request parameter fields", e);
-            }
-        });
+        Arrays.stream(getClass().getDeclaredFields()).parallel()
+                .filter(IS_ANNOTATED).forEach(field -> {
+                    try {
+                        final String name = field
+                                .getAnnotation(RequestParameter.class).value();
+                        final String value = BeanUtil
+                                .invokeGetter(field.getName(), getClass(), this)
+                                .toString();
+                        map.put(name, value);
+                    } catch (IllegalAccessException | IllegalArgumentException
+                            | InvocationTargetException
+                            | IntrospectionException e) {
+                        throw new HttpRequestTranslationException(
+                                "unable to translate request parameter fields",
+                                e);
+                    }
+                });
 
         return map;
     }
