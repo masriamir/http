@@ -32,4 +32,11 @@ public @interface RequestParameter {
      * @return the request parameter name
      */
     String value();
+
+    /**
+     * Returns whether the parameter is required to have data set.
+     *
+     * @return true if the parameter must be set, false otherwise
+     */
+    boolean required() default false;
 }

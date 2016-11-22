@@ -7,9 +7,12 @@ import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.akm.http.TestUtils;
+import com.akm.http.exception.HttpRequestTranslationException;
 
 /**
  * Provides test cases for request parameter translation.
@@ -20,9 +23,12 @@ import com.akm.http.TestUtils;
 public class RequestObjectTest {
     private TestRequestObject tro = null;
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Before
     public void setUp() throws Exception {
-        tro = new TestRequestObject("swkj-22984", 5, "help", true);
+        tro = new TestRequestObject("swkj-22984", 5, "help", true, null);
     }
 
     @After
@@ -32,9 +38,10 @@ public class RequestObjectTest {
 
     @Test
     public final void testTranslate() {
+        tro.setErrorField("no error");
         final Map<String, String> map = tro.translate();
         TestUtils.notEmpty(map, "map");
-        assertEquals("map size is not 3", 3, map.size());
+        assertEquals("map size is invalid", 4, map.size());
         assertTrue("api_user_key key is missing",
                 map.containsKey("api_user_key"));
         assertTrue("limit key is missing", map.containsKey("limit"));
@@ -45,6 +52,12 @@ public class RequestObjectTest {
         assertEquals("limit is invalid", "5", map.get("limit"));
         assertEquals("delete_on_error is invalid", "true",
                 map.get("delete_on_error"));
+    }
+
+    @Test
+    public final void testTranslateException() {
+        thrown.expect(HttpRequestTranslationException.class);
+        tro.translate();
     }
 
     public static final class TestRequestObject implements RequestObject {
@@ -59,12 +72,17 @@ public class RequestObjectTest {
         @RequestParameter("delete_on_error")
         public Boolean deleteOnError;
 
+        @RequestParameter(value = "error_field", required = true)
+        private String errorField;
+
         public TestRequestObject(final String userId, final Integer limit,
-                final String unused, final Boolean deleteOnError) {
+                final String unused, final Boolean deleteOnError,
+                final String errorField) {
             this.userId = userId;
             this.limit = limit;
             this.unused = unused;
             this.deleteOnError = deleteOnError;
+            this.errorField = errorField;
         }
 
         public String getUserId() {
@@ -89,6 +107,14 @@ public class RequestObjectTest {
 
         public void setUnused(final String unused) {
             this.unused = unused;
+        }
+
+        public String getErrorField() {
+            return errorField;
+        }
+
+        public void setErrorField(final String errorField) {
+            this.errorField = errorField;
         }
     }
 }
