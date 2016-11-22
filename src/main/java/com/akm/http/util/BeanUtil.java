@@ -23,14 +23,14 @@ public final class BeanUtil {
      *
      * @param objs
      *            the array of AccessibleObjects
-     * @param predicate
+     * @param filter
      *            the Predicate used to filter the array
      * @param consumer
      *            the Consumer to apply to each element
      */
     public static <T extends AccessibleObject> void iterator(final T[] objs,
-            final Predicate<T> predicate, final Consumer<T> consumer) {
-        Arrays.stream(objs).parallel().filter(predicate).forEach(consumer);
+            final Predicate<T> filter, final Consumer<T> consumer) {
+        Arrays.stream(objs).parallel().filter(filter).forEach(consumer);
     }
 
     /**
@@ -39,16 +39,15 @@ public final class BeanUtil {
      *
      * @param objs
      *            the array of AccessibleObjects
-     * @param predicate
+     * @param filter
      *            the Predicate used to filter the array
      * @param collector
      *            the Collector to use for reducing the elements
      * @return the result of the reduction
      */
     public static <T extends AccessibleObject, A, R> R collector(final T[] objs,
-            final Predicate<T> predicate, final Collector<T, A, R> collector) {
-        return Arrays.stream(objs).parallel().filter(predicate)
-                .collect(collector);
+            final Predicate<T> filter, final Collector<T, A, R> collector) {
+        return Arrays.stream(objs).parallel().filter(filter).collect(collector);
     }
 
     /**
