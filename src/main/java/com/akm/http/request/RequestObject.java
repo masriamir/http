@@ -13,6 +13,7 @@ import org.apache.http.util.TextUtils;
 
 import com.akm.http.exception.HttpRequestTranslationException;
 import com.akm.http.util.BeanUtil;
+import com.akm.http.util.CollectionUtil;
 
 /**
  * Interface used to provide a way for objects to translate their fields to
@@ -37,6 +38,19 @@ public interface RequestObject {
      */
     default String convertParameter(final Object obj) {
         return obj.toString();
+    }
+
+    /**
+     * Returns a Predicate to post-filter the generated parameter map after a
+     * {@link #translate()} is executed.
+     * <p>
+     * Note that by default a Predicate is returned that will remove all
+     * parameters with a null or empty value.
+     *
+     * @return the Predicate
+     */
+    default Predicate<Map.Entry<String, String>> postFilterParameters() {
+        return entry -> !TextUtils.isBlank(entry.getValue());
     }
 
     /**
@@ -115,8 +129,11 @@ public interface RequestObject {
      */
     default Map<String, String> translate()
             throws HttpRequestTranslationException {
-        return BeanUtil.collector(getClass().getDeclaredFields(),
-                isRequestParameter(), Collectors.toMap(getParameterKeyMapper(),
-                        getParameterValueMapper()));
+        return CollectionUtil.filterMap(
+                BeanUtil.collector(getClass().getDeclaredFields(),
+                        isRequestParameter(),
+                        Collectors.toMap(getParameterKeyMapper(),
+                                getParameterValueMapper())),
+                postFilterParameters());
     }
 }
