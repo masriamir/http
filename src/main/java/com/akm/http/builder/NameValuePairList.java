@@ -50,6 +50,15 @@ public final class NameValuePairList {
         return builder.build();
     }
 
+    /**
+     * Generates a new, empty NameValuePairList.
+     *
+     * @return the generated NameValuePairList
+     */
+    public static NameValuePairList emptyList() {
+        return getInstance().build();
+    }
+
     public static class Builder implements BuilderPattern<NameValuePairList> {
         private final List<NameValuePair> nvps;
 
