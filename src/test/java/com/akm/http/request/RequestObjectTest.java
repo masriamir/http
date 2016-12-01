@@ -3,6 +3,7 @@ package com.akm.http.request;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.junit.After;
@@ -29,7 +30,7 @@ public class RequestObjectTest {
     @Before
     public void setUp() throws Exception {
         tro = new TestRequestObject("swkj-22984", 5, "help", true, null,
-                "take me to your leader", 8, true);
+                "take me to your leader", 8, true, TestEnum.DOWN);
     }
 
     @After
@@ -41,8 +42,12 @@ public class RequestObjectTest {
     public final void testTranslate() {
         tro.setErrorField("no error");
         final Map<String, String> map = tro.translate();
+        final long expectedMapSize = Arrays
+                .stream(TestRequestObject.class.getDeclaredFields())
+                .filter(f -> f.getAnnotation(RequestParameter.class) != null)
+                .count();
         TestUtils.notEmpty(map, "map");
-        assertEquals("map size is invalid", 6, map.size());
+        assertEquals("map size is invalid", expectedMapSize, map.size());
         assertTrue("api_user_key key is missing",
                 map.containsKey("api_user_key"));
         assertTrue("limit key is missing", map.containsKey("limit"));
@@ -58,6 +63,10 @@ public class RequestObjectTest {
         assertEquals("super_complex is invalid",
                 "8: take me to your leader (fatal=true)",
                 map.get("super_complex"));
+        assertEquals("direction is invalid", "DOWN", map.get("direction"));
+        assertEquals("product1 is invalid", "PRODUCT1", map.get("product1"));
+        assertEquals("product2 is invalid", "PRODUCT 3 has 30 in stock",
+                map.get("product2"));
     }
 
     @Test
@@ -87,10 +96,20 @@ public class RequestObjectTest {
         @RequestParameter(value = "super_complex", required = true, adapter = SuperComplexTypeAdapter.class)
         private SuperComplexType superComplex;
 
+        @RequestParameter("direction")
+        public TestEnum direction;
+
+        @RequestParameter("product1")
+        public TestComplexEnum product1;
+
+        @RequestParameter(value = "product2", adapter = TestComplexEnumAdapter.class)
+        public TestComplexEnum product2;
+
         public TestRequestObject(final String userId, final Integer limit,
                 final String unused, final Boolean deleteOnError,
                 final String errorField, final String message,
-                final int severity, final boolean fatal) {
+                final int severity, final boolean fatal,
+                final TestEnum direction) {
             this.userId = userId;
             this.limit = limit;
             this.unused = unused;
@@ -98,6 +117,9 @@ public class RequestObjectTest {
             this.errorField = errorField;
             this.complex = new ComplexType(message, severity);
             this.superComplex = new SuperComplexType(message, severity, fatal);
+            this.direction = direction;
+            this.product1 = TestComplexEnum.PRODUCT1;
+            this.product2 = TestComplexEnum.PRODUCT3;
         }
 
         public String getUserId() {
@@ -185,6 +207,33 @@ public class RequestObjectTest {
         }
     }
 
+    public static enum TestEnum {
+        UP, DOWN, LEFT, RIGHT;
+    }
+
+    public static enum TestComplexEnum {
+        PRODUCT1("PRODUCT 1", 50),
+        PRODUCT2("PRODUCT 2", 25),
+        PRODUCT3("PRODUCT 3", 30),
+        PRODUCT4("PRODUCT 4", 10);
+
+        private final String name;
+        private final int quantity;
+
+        private TestComplexEnum(final String name, final int quantity) {
+            this.name = name;
+            this.quantity = quantity;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+    }
+
     public static final class TestRequestParameterAdapter
             extends RequestParameterAdapter<Boolean> {
         @Override
@@ -210,6 +259,16 @@ public class RequestObjectTest {
                 throws HttpRequestTranslationException {
             return String.format("%d: %s (fatal=%s)", t.getSeverity(),
                     t.message, t.isFatal());
+        }
+    }
+
+    public static final class TestComplexEnumAdapter
+            extends RequestParameterAdapter<TestComplexEnum> {
+        @Override
+        public String convert(final TestComplexEnum t)
+                throws HttpRequestTranslationException {
+            return String.format("%s has %d in stock", t.getName(),
+                    t.getQuantity());
         }
     }
 }
