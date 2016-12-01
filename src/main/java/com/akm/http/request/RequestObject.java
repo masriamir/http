@@ -26,21 +26,6 @@ import com.akm.http.util.CollectionUtil;
  */
 public interface RequestObject {
     /**
-     * Converts the given request parameter object to a String.
-     * <p>
-     * Note that this method is used for all {@link RequestParameter} fields in
-     * a class. You can override this method if you only need to change how the
-     * objects are converted to Strings.
-     *
-     * @param obj
-     *            the request parameter object
-     * @return the String representation of the object
-     */
-    default String convertParameter(final Object obj) {
-        return obj.toString();
-    }
-
-    /**
      * Returns a Predicate to post-filter the generated parameter map after a
      * {@link #translate()} is executed.
      * <p>
@@ -74,13 +59,12 @@ public interface RequestObject {
     /**
      * Returns a Function to generate parameter values from a Field.
      * <p>
-     * Note that by default the <code>toString()</code> method is used for each
-     * field. You can override the {@link #convertParameter(Object)} method if
-     * you just need to change how the parameter values are converted to
-     * Strings.
+     * This method uses each Field's {@link RequestParameterAdapter} to convert
+     * its value to a String.
      *
      * @return the value mapper function
      */
+    @SuppressWarnings("unchecked")
     default Function<Field, String> getParameterValueMapper() {
         return field -> {
             try {
@@ -98,7 +82,8 @@ public interface RequestObject {
                 }
 
                 if (obj != null) {
-                    value = convertParameter(obj);
+                    // use adapter to convert parameter value
+                    value = parameter.adapter().newInstance().convert(obj);
                 }
 
                 final boolean blankValue = TextUtils.isBlank(value);
@@ -111,8 +96,9 @@ public interface RequestObject {
                 } else {
                     return "";
                 }
-            } catch (IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException | IntrospectionException e) {
+            } catch (IntrospectionException | IllegalAccessException
+                    | IllegalArgumentException | InvocationTargetException
+                    | InstantiationException e) {
                 throw new HttpRequestTranslationException(
                         "unable to translate request parameter fields", e);
             }
@@ -120,8 +106,9 @@ public interface RequestObject {
     }
 
     /**
-     * Generate a map of request parameters and their values from all request
-     * parameter fields.
+     * Generate a Map of request parameters and their values from all request
+     * parameter fields. The Map is then post-filtered based on the Predicate
+     * returned by {@link #postFilterParameters()}.
      *
      * @return a map containing all request parameters and their values
      * @throws HttpRequestTranslationException
