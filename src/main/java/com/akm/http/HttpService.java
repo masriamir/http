@@ -2,6 +2,7 @@ package com.akm.http;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,7 +11,6 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.akm.http.builder.NameValuePairList;
 import com.akm.http.exception.HttpServiceException;
 
 /**
@@ -31,15 +31,15 @@ public final class HttpService {
      * @param url
      *            the url to send the request
      * @param headers
-     *            the list of headers to set
+     *            the map of headers to set
      * @param parameters
-     *            the list of parameters to set
+     *            the map of parameters to set
      * @return the HttpResponse
      * @throws HttpServiceException
      *             if any errors occur while executing the request
      */
-    public HttpResponse get(final String url, final NameValuePairList headers,
-            final NameValuePairList parameters) throws HttpServiceException {
+    public HttpResponse get(final String url, final Map<String, String> headers,
+            final Map<String, String> parameters) throws HttpServiceException {
         return doRequest(HttpGetCallable.class, url, headers, parameters);
     }
 
@@ -51,15 +51,16 @@ public final class HttpService {
      * @param url
      *            the url to send the request
      * @param headers
-     *            the list of headers for the request
+     *            the map of headers for the request
      * @param parameters
-     *            the list of parameters to send
+     *            the map of parameters to send
      * @return the HttpResponse
      * @throws HttpServiceException
      *             if any errors occur while executing the request
      */
-    public HttpResponse post(final String url, final NameValuePairList headers,
-            final NameValuePairList parameters) throws HttpServiceException {
+    public HttpResponse post(final String url,
+            final Map<String, String> headers,
+            final Map<String, String> parameters) throws HttpServiceException {
         return doRequest(HttpPostCallable.class, url, headers, parameters);
     }
 
@@ -71,17 +72,17 @@ public final class HttpService {
      * @param url
      *            the url to send the request
      * @param headers
-     *            the list of headers for the request
+     *            the map of headers for the request
      * @param parameters
-     *            the list of parameters to send
+     *            the map of parameters to send
      * @return the HttpResponse
      * @throws HttpServiceException
      *             if any errors occur while executing the request
      */
     private <T extends AbstractHttpCallable> HttpResponse doRequest(
             final Class<T> clazz, final String url,
-            final NameValuePairList headers, final NameValuePairList parameters)
-            throws HttpServiceException {
+            final Map<String, String> headers,
+            final Map<String, String> parameters) throws HttpServiceException {
         final T callable = getHttpCallable(clazz, url, headers, parameters);
         return execute(callable);
     }
@@ -132,21 +133,20 @@ public final class HttpService {
      * @param url
      *            the url to send the request
      * @param headers
-     *            the list of headers for the request
+     *            the map of headers for the request
      * @param parameters
-     *            the list of parameters to send
+     *            the map of parameters to send
      * @return the HttpResponse
      * @throws HttpServiceException
      *             if any errors occur while instantiating the class
      */
     private <T extends AbstractHttpCallable> T getHttpCallable(
             final Class<T> clazz, final String url,
-            final NameValuePairList headers, final NameValuePairList parameters)
-            throws HttpServiceException {
+            final Map<String, String> headers,
+            final Map<String, String> parameters) throws HttpServiceException {
         try {
-            final Constructor<T> constructor = clazz.getConstructor(
-                    String.class, NameValuePairList.class,
-                    NameValuePairList.class);
+            final Constructor<T> constructor = clazz
+                    .getConstructor(String.class, Map.class, Map.class);
             return constructor.newInstance(url, headers, parameters);
         } catch (NoSuchMethodException | SecurityException
                 | InstantiationException | IllegalAccessException

@@ -1,12 +1,14 @@
 package com.akm.http;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.akm.http.builder.NameValuePairList;
 import com.akm.http.exception.HttpServiceException;
 
 /**
@@ -17,8 +19,8 @@ import com.akm.http.exception.HttpServiceException;
  */
 public class HttpGetTest {
     private HttpService http = null;
-    private static NameValuePairList headers = null;
-    private static NameValuePairList parameters = null;
+    private static Map<String, String> headers = null;
+    private static Map<String, String> parameters = null;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -26,8 +28,8 @@ public class HttpGetTest {
     @Before
     public void setUp() throws Exception {
         http = new HttpService();
-        headers = NameValuePairList.getInstance().build();
-        parameters = NameValuePairList.getInstance().build();
+        headers = new HashMap<>();
+        parameters = new HashMap<>();
     }
 
     @After
@@ -80,8 +82,8 @@ public class HttpGetTest {
 
     @Test
     public final void testGetParameters() throws HttpServiceException {
-        parameters = NameValuePairList.getInstance().add("a", "5").add("b", "2")
-                .build();
+        parameters.put("a", "5");
+        parameters.put("b", "2");
         final HttpResponse resp = get();
         TestUtils.successResponseAndCode(resp);
     }

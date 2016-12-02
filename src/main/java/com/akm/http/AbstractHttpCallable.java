@@ -3,13 +3,13 @@ package com.akm.http;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequest;
-import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -17,12 +17,11 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.Args;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.akm.http.builder.NameValuePairList;
 
 /**
  * Internal abstract implementation of {@link HttpExecutor} that also implements
@@ -30,17 +29,9 @@ import com.akm.http.builder.NameValuePairList;
  * <p>
  * Extended classes must implement
  * {@link HttpExecutor#execute(CloseableHttpClient)}.
- * <p>
- * Headers and parameters are set using a {@link NameValuePairList} that can be
- * built using the following:
- *
- * <pre>
- * NameValuePairList.getInstance().add("name", "value").build();
- * </pre>
  *
  * @see HttpExecutor
  * @see Callable
- * @see NameValuePairList
  * @since 0.1
  * @author Amir
  */
@@ -55,14 +46,14 @@ abstract class AbstractHttpCallable
     private final String url;
 
     /**
-     * The list of headers to use when making the request.
+     * The map of headers to use when making the request.
      */
-    private final NameValuePairList headers;
+    private final Map<String, String> headers;
 
     /**
-     * The list of parameters for the request.
+     * The map of parameters for the request.
      */
-    private final NameValuePairList parameters;
+    private final Map<String, String> parameters;
 
     /**
      * The HTTP method name.
@@ -70,8 +61,8 @@ abstract class AbstractHttpCallable
     private final String method;
 
     public AbstractHttpCallable(final String url,
-            final NameValuePairList headers, final NameValuePairList parameters,
-            final String method) {
+            final Map<String, String> headers,
+            final Map<String, String> parameters, final String method) {
         this.url = Args.notBlank(url, "url");
         this.headers = headers;
         this.parameters = parameters;
@@ -128,12 +119,8 @@ abstract class AbstractHttpCallable
      *            an {@link HttpRequest} object
      */
     protected void addHeaders(final HttpRequest request) {
-        if (notEmpty(headers.getNvps())) {
-            for (final NameValuePair nvp : headers.getNvps()) {
-                LOGGER.debug("setting the following header: {}={}",
-                        nvp.getName(), nvp.getValue());
-                request.setHeader(nvp.getName(), nvp.getValue());
-            }
+        if (notEmpty(headers)) {
+            headers.forEach((k, v) -> request.setHeader(k, v));
         }
     }
 
@@ -144,10 +131,12 @@ abstract class AbstractHttpCallable
      *            an {@link HttpEntityEnclosingRequest} object
      */
     protected void addPostParameters(final HttpEntityEnclosingRequest request) {
-        if (notEmpty(parameters.getNvps())) {
-            LOGGER.debug("setting the following entity parameters: {}",
-                    parameters.getNvps());
-            request.setEntity(new UrlEncodedFormEntity(parameters.getNvps(),
+        if (notEmpty(parameters)) {
+            request.setEntity(new UrlEncodedFormEntity(
+                    parameters.entrySet().parallelStream()
+                            .map(e -> new BasicNameValuePair(e.getKey(),
+                                    e.getValue()))
+                            .collect(Collectors.toList()),
                     StandardCharsets.UTF_8));
         }
     }
@@ -159,16 +148,10 @@ abstract class AbstractHttpCallable
      *            an {@link HttpRequestBase} object
      */
     protected void addRequestParameters(final HttpRequestBase request) {
-        if (notEmpty(parameters.getNvps())) {
+        if (notEmpty(parameters)) {
             try {
                 final URIBuilder uriBuilder = new URIBuilder(url);
-
-                for (final NameValuePair nvp : parameters.getNvps()) {
-                    LOGGER.debug("setting the following url parameter: {}={}",
-                            nvp.getName(), nvp.getValue());
-                    uriBuilder.setParameter(nvp.getName(), nvp.getValue());
-                }
-
+                parameters.forEach((k, v) -> uriBuilder.setParameter(k, v));
                 request.setURI(uriBuilder.build());
             } catch (final URISyntaxException e) {
                 LOGGER.error("unable to build uri", e);
@@ -180,11 +163,11 @@ abstract class AbstractHttpCallable
         return url;
     }
 
-    protected NameValuePairList getHeaders() {
+    protected Map<String, String> getHeaders() {
         return headers;
     }
 
-    protected NameValuePairList getParameters() {
+    protected Map<String, String> getParameters() {
         return parameters;
     }
 
@@ -193,13 +176,13 @@ abstract class AbstractHttpCallable
     }
 
     /**
-     * Checks if the given collection is not null and not empty.
+     * Checks if the given map is not null and not empty.
      *
-     * @param collection
-     *            the collection to check
-     * @return true if the collection is not null and not empty, false otherwise
+     * @param map
+     *            the map to check
+     * @return true if the map is not null and not empty, false otherwise
      */
-    private <E, T extends Collection<E>> boolean notEmpty(final T collection) {
-        return collection != null && !collection.isEmpty();
+    private <T extends Map<K, V>, K, V> boolean notEmpty(final T map) {
+        return map != null && !map.isEmpty();
     }
 }

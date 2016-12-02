@@ -1,12 +1,11 @@
 package com.akm.http;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-
-import com.akm.http.builder.NameValuePairList;
 
 /**
  * Use this class to send Http GET requests.
@@ -16,8 +15,8 @@ import com.akm.http.builder.NameValuePairList;
  * @author Amir
  */
 final class HttpGetCallable extends AbstractHttpCallable {
-    public HttpGetCallable(final String url, final NameValuePairList headers,
-            final NameValuePairList parameters) {
+    public HttpGetCallable(final String url, final Map<String, String> headers,
+            final Map<String, String> parameters) {
         super(url, headers, parameters, HttpGet.METHOD_NAME);
     }
 
