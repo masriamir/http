@@ -34,7 +34,8 @@ public class BeanUtilTest {
 
     @Before
     public void setUp() throws Exception {
-        dummy = new Dummy("5", 10, false);
+        dummy = new Dummy("5", 10, false, "my message", true, 3040489483L, 23,
+                18, "john");
     }
 
     @After
@@ -54,8 +55,15 @@ public class BeanUtilTest {
                 dummy.getClass().getDeclaredFields(), f -> true,
                 Collectors.toList());
         TestUtils.notEmpty(fields, "fields");
-        assertEquals("fields has invalid size", 3, fields.size());
+        assertEquals("fields has invalid size", 5, fields.size());
         assertEquals("field name is invalid", "id", fields.get(0).getName());
+    }
+
+    @Test
+    public final void testFindAllFields() {
+        final Field[] fields = BeanUtil.findAllFields(Dummy.class);
+        assertNotNull("fields is null", fields);
+        assertEquals("fields length is invalid", 9, fields.length);
     }
 
     @Test
@@ -78,11 +86,66 @@ public class BeanUtilTest {
     }
 
     @Test
+    public final void testFindPropertyDescriptorNoSetterException()
+            throws IntrospectionException {
+        thrown.expect(IntrospectionException.class);
+        BeanUtil.findPropertyDescriptor("expired", Dummy.class);
+    }
+
+    @Test
+    public final void testFindPropertyDescriptorReadOnly()
+            throws IntrospectionException, NoSuchFieldException,
+            SecurityException {
+        final PropertyDescriptor pd = BeanUtil.findPropertyDescriptor("levels",
+                Dummy.class, true);
+        assertNotNull("property descriptor is null", pd);
+
+        final Field f = dummy.getClass().getDeclaredField("levels");
+        assertEquals("field name is not equal", f.getName(), pd.getName());
+    }
+
+    @Test
+    public final void testFindPropertyDescriptorReadOnlyBoolean()
+            throws IntrospectionException, NoSuchFieldException,
+            SecurityException {
+        final PropertyDescriptor pd = BeanUtil.findPropertyDescriptor("expired",
+                Dummy.class, true);
+        assertNotNull("property descriptor is null", pd);
+
+        final Field f = dummy.getClass().getDeclaredField("expired");
+        assertEquals("field name is not equal", f.getName(), pd.getName());
+    }
+
+    @Test
+    public final void testFindPropertyDescriptorWriteOnly()
+            throws IntrospectionException, NoSuchFieldException,
+            SecurityException {
+        final PropertyDescriptor pd = BeanUtil.findPropertyDescriptor("name",
+                Dummy.class, false);
+        assertNotNull("property descriptor is null", pd);
+
+        final Field f = dummy.getClass().getDeclaredField("name");
+        assertEquals("field name is not equal", f.getName(), pd.getName());
+    }
+
+    @Test
     public final void testFindGetter() throws IntrospectionException {
         final Method getter = BeanUtil.findGetter("id", Dummy.class);
         assertNotNull("getter is null", getter);
         assertEquals("getter name is invalid", "getId", getter.getName());
         assertEquals("getter return type is invalid", String.class,
+                getter.getReturnType());
+        assertArrayEquals("getter parameter types are invalid", new Class[0],
+                getter.getParameterTypes());
+    }
+
+    @Test
+    public final void testFindGetterReadOnly() throws IntrospectionException {
+        final Method getter = BeanUtil.findGetterReadOnly("expired",
+                Dummy.class);
+        assertNotNull("getter is null", getter);
+        assertEquals("getter name is invalid", "isExpired", getter.getName());
+        assertEquals("getter return type is invalid", boolean.class,
                 getter.getReturnType());
         assertArrayEquals("getter parameter types are invalid", new Class[0],
                 getter.getParameterTypes());
@@ -99,6 +162,17 @@ public class BeanUtilTest {
         final Method setter = BeanUtil.findSetter("id", Dummy.class);
         assertNotNull("setter is null", setter);
         assertEquals("setter name is invalid", "setId", setter.getName());
+        assertEquals("setter return type is invalid", void.class,
+                setter.getReturnType());
+        assertArrayEquals("setter parameter types are invalid",
+                new Class[] { String.class }, setter.getParameterTypes());
+    }
+
+    @Test
+    public final void testFindSetterWriteOnly() throws IntrospectionException {
+        final Method setter = BeanUtil.findSetterWriteOnly("name", Dummy.class);
+        assertNotNull("setter is null", setter);
+        assertEquals("setter name is invalid", "setName", setter.getName());
         assertEquals("setter return type is invalid", void.class,
                 setter.getReturnType());
         assertArrayEquals("setter parameter types are invalid",
@@ -163,15 +237,68 @@ public class BeanUtilTest {
         BeanUtil.invokeSetter("count", Dummy.class, dummy, "error");
     }
 
-    public static final class Dummy {
+    public static class SuperSuperDummy {
+        private int code;
+
+        public SuperSuperDummy(final int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(final int code) {
+            this.code = code;
+        }
+    }
+
+    public static class SuperDummy extends SuperSuperDummy {
+        private String message;
+        private boolean fatal;
+        public long time;
+
+        public SuperDummy(final String message, final boolean fatal,
+                final long time, final int code) {
+            super(code);
+            this.message = message;
+            this.fatal = fatal;
+            this.time = time;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(final String message) {
+            this.message = message;
+        }
+
+        public boolean isFatal() {
+            return fatal;
+        }
+
+        public void setFatal(final boolean fatal) {
+            this.fatal = fatal;
+        }
+    }
+
+    public static final class Dummy extends SuperDummy {
         private String id;
         private int count;
         private final boolean expired;
+        private final int levels;
+        private String name;
 
-        public Dummy(final String id, final int count, final boolean expired) {
+        public Dummy(final String id, final int count, final boolean expired,
+                final String message, final boolean fatal, final long time,
+                final int code, final int levels, final String name) {
+            super(message, fatal, time, code);
             this.id = id;
             this.count = count;
             this.expired = expired;
+            this.levels = levels;
+            this.name = name;
         }
 
         public String getId() {
@@ -188,6 +315,18 @@ public class BeanUtilTest {
 
         public void setCount(final int count) {
             this.count = count;
+        }
+
+        public boolean isExpired() {
+            return expired;
+        }
+
+        public int getLevels() {
+            return levels;
+        }
+
+        public void setName(final String name) {
+            this.name = name;
         }
     }
 }

@@ -77,8 +77,14 @@ public interface RequestObject {
                     obj = field.get(this);
                 } else {
                     // field not public, invoke getter
-                    obj = BeanUtil.invokeGetter(field.getName(), getClass(),
-                            this);
+                    if (Modifier.isFinal(field.getModifiers())) {
+                        // no setter method, will throw exception otherwise
+                        obj = BeanUtil.invokeGetterReadOnly(field.getName(),
+                                getClass(), this);
+                    } else {
+                        obj = BeanUtil.invokeGetter(field.getName(), getClass(),
+                                this);
+                    }
                 }
 
                 if (obj != null) {
@@ -117,7 +123,7 @@ public interface RequestObject {
     default Map<String, String> translate()
             throws HttpRequestTranslationException {
         return CollectionUtil.filterMap(
-                BeanUtil.collector(getClass().getDeclaredFields(),
+                BeanUtil.collector(BeanUtil.findAllFields(getClass()),
                         isRequestParameter(),
                         Collectors.toMap(getParameterKeyMapper(),
                                 getParameterValueMapper())),

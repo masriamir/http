@@ -23,6 +23,7 @@ import com.akm.http.exception.HttpRequestTranslationException;
  */
 public class RequestObjectTest {
     private TestRequestObject tro = null;
+    private SuperComplexType sct = null;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -31,11 +32,13 @@ public class RequestObjectTest {
     public void setUp() throws Exception {
         tro = new TestRequestObject("swkj-22984", 5, "help", true, null,
                 "take me to your leader", 8, true, TestEnum.DOWN);
+        sct = new SuperComplexType("sct message", 10, true);
     }
 
     @After
     public void tearDown() throws Exception {
         tro = null;
+        sct = null;
     }
 
     @Test
@@ -67,6 +70,17 @@ public class RequestObjectTest {
         assertEquals("product1 is invalid", "PRODUCT1", map.get("product1"));
         assertEquals("product2 is invalid", "PRODUCT 3 has 30 in stock",
                 map.get("product2"));
+    }
+
+    @Test
+    public final void testTranslateInheritance() {
+        final Map<String, String> map = sct.translate();
+        TestUtils.notEmpty(map, "map");
+        assertEquals("map size is invalid", 2, map.size());
+        assertTrue("message key is missing", map.containsKey("message"));
+        assertEquals("message is invalid", "sct message", map.get("message"));
+        assertTrue("fatal key is missing", map.containsKey("fatal"));
+        assertEquals("fatal is invalid", "true", map.get("fatal"));
     }
 
     @Test
@@ -171,8 +185,10 @@ public class RequestObjectTest {
         }
     }
 
-    public static class ComplexType {
+    public static class ComplexType implements RequestObject {
+        @RequestParameter("message")
         public String message;
+
         private int severity;
 
         public ComplexType(final String message, final int severity) {
@@ -190,7 +206,8 @@ public class RequestObjectTest {
     }
 
     public static final class SuperComplexType extends ComplexType {
-        private boolean fatal;
+        @RequestParameter("fatal")
+        final private boolean fatal;
 
         public SuperComplexType(final String message, final int severity,
                 final boolean fatal) {
@@ -200,10 +217,6 @@ public class RequestObjectTest {
 
         public boolean isFatal() {
             return fatal;
-        }
-
-        public void setFatal(final boolean fatal) {
-            this.fatal = fatal;
         }
     }
 
