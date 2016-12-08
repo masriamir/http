@@ -1,6 +1,6 @@
 package com.akm.http.util;
 
-import static java.util.Locale.ENGLISH;
+import java.util.Locale;
 
 import org.apache.http.util.TextUtils;
 
@@ -24,7 +24,8 @@ public final class StringUtil {
                     "cannot capitalize blank string");
         }
 
-        return str.substring(0, 1).toUpperCase(ENGLISH) + str.substring(1);
+        return str.substring(0, 1).toUpperCase(Locale.ENGLISH) +
+                str.substring(1);
     }
 
     private StringUtil() {}
