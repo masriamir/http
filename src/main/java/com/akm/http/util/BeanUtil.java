@@ -56,7 +56,7 @@ public final class BeanUtil {
      * classes.
      *
      * @param clazz
-     *            the class whose fields we are interested in
+     *            the class containing the fields to find
      * @return the array of fields
      */
     public static Field[] findAllFields(final Class<?> clazz) {
@@ -80,7 +80,7 @@ public final class BeanUtil {
     }
 
     /**
-     * Gets a {@link PropertyDescriptor} from the given class with the given
+     * Returns a {@link PropertyDescriptor} from the given class with the given
      * field name.
      *
      * @param field
@@ -96,12 +96,32 @@ public final class BeanUtil {
         return new PropertyDescriptor(field, clazz);
     }
 
+    /**
+     * Returns a {@link PropertyDescriptor} from the given class with the given
+     * field name.
+     * <p>
+     * Note that this function should only be used when accessing read-only
+     * (final) fields or write-only fields. That is, if the field has only a
+     * getter or only a setter.
+     *
+     * @param field
+     *            the field name
+     * @param clazz
+     *            the class containing the field
+     * @param readOnly
+     *            whether the field is read-only or write-only
+     * @return the PropertyDescriptor for this field
+     * @throws IntrospectionException
+     *             if there are any errors during introspection
+     */
     public static PropertyDescriptor findPropertyDescriptor(final String field,
             final Class<?> clazz, final boolean readOnly)
             throws IntrospectionException {
         final String capitalized = StringUtil.capitalize(field);
 
         if (readOnly) {
+            // check for a boolean field first due to different naming
+            // convention
             try {
                 return new PropertyDescriptor(field, clazz, "is" + capitalized,
                         null);
