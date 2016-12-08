@@ -1,6 +1,7 @@
 package com.akm.http.request;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import com.akm.http.exception.HttpRequestTranslationException;
 public class RequestObjectTest {
     private TestRequestObject tro = null;
     private SuperComplexType sct = null;
+    private SimpleType st = null;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -33,12 +35,14 @@ public class RequestObjectTest {
         tro = new TestRequestObject("swkj-22984", 5, "help", true, null,
                 "take me to your leader", 8, true, TestEnum.DOWN);
         sct = new SuperComplexType("sct message", 10, true);
+        st = new SimpleType("st name");
     }
 
     @After
     public void tearDown() throws Exception {
         tro = null;
         sct = null;
+        st = null;
     }
 
     @Test
@@ -81,6 +85,13 @@ public class RequestObjectTest {
         assertEquals("message is invalid", "sct message", map.get("message"));
         assertTrue("fatal key is missing", map.containsKey("fatal"));
         assertEquals("fatal is invalid", "true", map.get("fatal"));
+    }
+
+    @Test
+    public final void testTranslateNotAnnotated() {
+        final Map<String, String> map = st.translate();
+        assertNotNull("map is null", map);
+        assertTrue("map is not empty", map.isEmpty());
     }
 
     @Test
@@ -217,6 +228,18 @@ public class RequestObjectTest {
 
         public boolean isFatal() {
             return fatal;
+        }
+    }
+
+    public static final class SimpleType implements RequestObject {
+        private final String name;
+
+        public SimpleType(final String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 
