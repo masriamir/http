@@ -107,6 +107,27 @@ public final class HttpService {
     }
 
     /**
+     * Performs an HTTP TRACE request to the given url using the specified
+     * headers and parameters. If the request is successful an
+     * {@link HttpResponse} is returned.
+     *
+     * @param url
+     *            the url to send the request
+     * @param headers
+     *            the map of headers to set
+     * @param parameters
+     *            the map of parameters to set
+     * @return the HttpResponse
+     * @throws HttpServiceException
+     *             if any errors occur while executing the request
+     */
+    public HttpResponse trace(final String url,
+            final Map<String, String> headers,
+            final Map<String, String> parameters) throws HttpServiceException {
+        return doRequest(HttpTraceCallable.class, url, headers, parameters);
+    }
+
+    /**
      * Performs an HTTP POST request to the given url using the specified
      * headers and parameters. If the request is successful an
      * {@link HttpResponse} is returned.
