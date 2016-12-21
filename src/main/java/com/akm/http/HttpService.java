@@ -44,6 +44,69 @@ public final class HttpService {
     }
 
     /**
+     * Performs an HTTP DELETE request to the given url using the specified
+     * headers and parameters. If the request is successful an
+     * {@link HttpResponse} is returned.
+     *
+     * @param url
+     *            the url to send the request
+     * @param headers
+     *            the map of headers to set
+     * @param parameters
+     *            the map of parameters to set
+     * @return the HttpResponse
+     * @throws HttpServiceException
+     *             if any errors occur while executing the request
+     */
+    public HttpResponse delete(final String url,
+            final Map<String, String> headers,
+            final Map<String, String> parameters) throws HttpServiceException {
+        return doRequest(HttpDeleteCallable.class, url, headers, parameters);
+    }
+
+    /**
+     * Performs an HTTP HEAD request to the given url using the specified
+     * headers and parameters. If the request is successful an
+     * {@link HttpResponse} is returned.
+     *
+     * @param url
+     *            the url to send the request
+     * @param headers
+     *            the map of headers to set
+     * @param parameters
+     *            the map of parameters to set
+     * @return the HttpResponse
+     * @throws HttpServiceException
+     *             if any errors occur while executing the request
+     */
+    public HttpResponse head(final String url,
+            final Map<String, String> headers,
+            final Map<String, String> parameters) throws HttpServiceException {
+        return doRequest(HttpHeadCallable.class, url, headers, parameters);
+    }
+
+    /**
+     * Performs an HTTP OPTIONS request to the given url using the specified
+     * headers and parameters. If the request is successful an
+     * {@link HttpResponse} is returned.
+     *
+     * @param url
+     *            the url to send the request
+     * @param headers
+     *            the map of headers to set
+     * @param parameters
+     *            the map of parameters to set
+     * @return the HttpResponse
+     * @throws HttpServiceException
+     *             if any errors occur while executing the request
+     */
+    public HttpResponse options(final String url,
+            final Map<String, String> headers,
+            final Map<String, String> parameters) throws HttpServiceException {
+        return doRequest(HttpOptionsCallable.class, url, headers, parameters);
+    }
+
+    /**
      * Performs an HTTP POST request to the given url using the specified
      * headers and parameters. If the request is successful an
      * {@link HttpResponse} is returned.
@@ -62,6 +125,47 @@ public final class HttpService {
             final Map<String, String> headers,
             final Map<String, String> parameters) throws HttpServiceException {
         return doRequest(HttpPostCallable.class, url, headers, parameters);
+    }
+
+    /**
+     * Performs an HTTP PUT request to the given url using the specified headers
+     * and parameters. If the request is successful an {@link HttpResponse} is
+     * returned.
+     *
+     * @param url
+     *            the url to send the request
+     * @param headers
+     *            the map of headers for the request
+     * @param parameters
+     *            the map of parameters to send
+     * @return the HttpResponse
+     * @throws HttpServiceException
+     *             if any errors occur while executing the request
+     */
+    public HttpResponse put(final String url, final Map<String, String> headers,
+            final Map<String, String> parameters) throws HttpServiceException {
+        return doRequest(HttpPutCallable.class, url, headers, parameters);
+    }
+
+    /**
+     * Performs an HTTP PATCH request to the given url using the specified
+     * headers and parameters. If the request is successful an
+     * {@link HttpResponse} is returned.
+     *
+     * @param url
+     *            the url to send the request
+     * @param headers
+     *            the map of headers for the request
+     * @param parameters
+     *            the map of parameters to send
+     * @return the HttpResponse
+     * @throws HttpServiceException
+     *             if any errors occur while executing the request
+     */
+    public HttpResponse patch(final String url,
+            final Map<String, String> headers,
+            final Map<String, String> parameters) throws HttpServiceException {
+        return doRequest(HttpPatchCallable.class, url, headers, parameters);
     }
 
     /**
