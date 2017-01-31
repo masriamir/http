@@ -300,7 +300,7 @@ public final class BeanUtil {
             final Class<?> clazz, final Object obj, final Object... args)
             throws IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, IntrospectionException {
-        return findSetter(field, clazz).invoke(obj, args);
+        return findSetterWriteOnly(field, clazz).invoke(obj, args);
     }
 
     private BeanUtil() {}
