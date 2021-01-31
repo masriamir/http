@@ -1,20 +1,19 @@
 package com.akm.http.request;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import com.akm.http.TestUtils;
 import com.akm.http.exception.HttpRequestTranslationException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Provides test cases for request parameter translation.
@@ -27,19 +26,16 @@ public class RequestObjectTest {
     private SuperComplexType sct = null;
     private SimpleType st = null;
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() {
         tro = new TestRequestObject("swkj-22984", 5, "help", true, null,
                 "take me to your leader", 8, true, TestEnum.DOWN);
         sct = new SuperComplexType("sct message", 10, true);
         st = new SimpleType("st name");
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() {
         tro = null;
         sct = null;
         st = null;
@@ -54,50 +50,44 @@ public class RequestObjectTest {
                 .filter(f -> f.getAnnotation(RequestParameter.class) != null)
                 .count();
         TestUtils.notEmpty(map, "map");
-        assertEquals("map size is invalid", expectedMapSize, map.size());
-        assertTrue("api_user_key key is missing",
-                map.containsKey("api_user_key"));
-        assertTrue("limit key is missing", map.containsKey("limit"));
-        assertTrue("delete_on_error key is missing",
-                map.containsKey("delete_on_error"));
-        assertEquals("api_user_key is invalid", "swkj-22984",
-                map.get("api_user_key"));
-        assertEquals("limit is invalid", "5", map.get("limit"));
-        assertEquals("delete_on_error is invalid", "this is true",
-                map.get("delete_on_error"));
-        assertEquals("complex is invalid", "8: take me to your leader",
-                map.get("complex"));
-        assertEquals("super_complex is invalid",
-                "8: take me to your leader (fatal=true)",
-                map.get("super_complex"));
-        assertEquals("direction is invalid", "DOWN", map.get("direction"));
-        assertEquals("product1 is invalid", "PRODUCT1", map.get("product1"));
-        assertEquals("product2 is invalid", "PRODUCT 3 has 30 in stock",
-                map.get("product2"));
+        assertAll("translate",
+            () -> assertEquals(expectedMapSize, map.size(), "map size is invalid"),
+            () -> assertTrue(map.containsKey("api_user_key"), "api_user_key key is missing"),
+            () -> assertTrue(map.containsKey("limit"), "limit key is missing"),
+            () -> assertTrue(map.containsKey("delete_on_error"), "delete_on_error key is missing"),
+            () -> assertEquals("swkj-22984", map.get("api_user_key"), "api_user_key is invalid"),
+            () -> assertEquals("5", map.get("limit"), "limit is invalid"),
+            () -> assertEquals("this is true", map.get("delete_on_error"), "delete_on_error is invalid"),
+            () -> assertEquals("8: take me to your leader", map.get("complex"), "complex is invalid"),
+            () -> assertEquals("8: take me to your leader (fatal=true)", map.get("super_complex"), "super_complex is invalid"),
+            () -> assertEquals("DOWN", map.get("direction"), "direction is invalid"),
+            () -> assertEquals("PRODUCT1", map.get("product1"), "product1 is invalid"),
+            () -> assertEquals("PRODUCT 3 has 30 in stock", map.get("product2"), "product2 is invalid"));
     }
 
     @Test
     public final void testTranslateInheritance() {
         final Map<String, String> map = sct.translate();
         TestUtils.notEmpty(map, "map");
-        assertEquals("map size is invalid", 2, map.size());
-        assertTrue("message key is missing", map.containsKey("message"));
-        assertEquals("message is invalid", "sct message", map.get("message"));
-        assertTrue("fatal key is missing", map.containsKey("fatal"));
-        assertEquals("fatal is invalid", "true", map.get("fatal"));
+        assertAll("translate inheritance",
+            () -> assertEquals(2, map.size(), "map size is invalid"),
+            () -> assertTrue(map.containsKey("message"), "message key is missing"),
+            () -> assertEquals("sct message", map.get("message"), "message is invalid"),
+            () -> assertTrue(map.containsKey("fatal"), "fatal key is missing"),
+            () -> assertEquals("true", map.get("fatal"), "fatal is invalid"));
     }
 
     @Test
     public final void testTranslateNotAnnotated() {
         final Map<String, String> map = st.translate();
-        assertNotNull("map is null", map);
-        assertTrue("map is not empty", map.isEmpty());
+        assertAll("translate not annotated",
+            () -> assertNotNull(map, "map is null"),
+            () -> assertTrue(map.isEmpty(), "map is not empty"));
     }
 
     @Test
     public final void testTranslateException() {
-        thrown.expect(HttpRequestTranslationException.class);
-        tro.translate();
+        assertThrows(HttpRequestTranslationException.class, () -> tro.translate());
     }
 
     public static final class TestRequestObject implements RequestObject {

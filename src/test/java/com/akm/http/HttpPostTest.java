@@ -1,13 +1,13 @@
 package com.akm.http;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.akm.http.exception.HttpServiceException;
 
@@ -22,27 +22,24 @@ public class HttpPostTest {
     private static Map<String, String> headers = null;
     private static Map<String, String> parameters = null;
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() {
         http = new HttpService();
         headers = new HashMap<>();
         parameters = new HashMap<>();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() {
         http = null;
         headers = null;
         parameters = null;
     }
 
     @Test
-    public final void testNullUrl() throws HttpServiceException {
-        TestUtils.nullUrlException(thrown);
-        post(null);
+    public final void testNullUrl() {
+        Exception exception = assertThrows(HttpServiceException.class, () -> post(null));
+        TestUtils.nullUrlException(exception);
     }
 
     @Test

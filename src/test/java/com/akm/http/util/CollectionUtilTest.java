@@ -1,17 +1,17 @@
 package com.akm.http.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Provides test cases for the CollectionUtil class.
@@ -23,8 +23,8 @@ public class CollectionUtilTest {
     private List<String> list = null;
     private Map<String, String> map = null;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() {
         list = new ArrayList<>();
         list.add("a");
         list.add("b");
@@ -38,8 +38,8 @@ public class CollectionUtilTest {
         map.put("d", "4");
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() {
         list = null;
         map = null;
     }
@@ -51,11 +51,11 @@ public class CollectionUtilTest {
         list.add("  ");
         list = (List<String>) CollectionUtil.filterCollection(list,
                 e -> !e.trim().isEmpty());
-        assertNotNull("list is null", list);
-        assertFalse("list is empty", list.isEmpty());
-        assertEquals("list size is invalid", 5, list.size());
-        assertEquals("list element is invalid", " e ",
-                list.get(list.size() - 1));
+        assertAll("filter collection",
+            () -> assertNotNull(list, "list is null"),
+            () -> assertFalse(list.isEmpty(), "list is empty"),
+            () -> assertEquals(5, list.size(), "list size is invalid"),
+            () -> assertEquals(" e ", list.get(list.size() - 1), "list element is invalid"));
     }
 
     @Test
@@ -65,9 +65,10 @@ public class CollectionUtilTest {
         map.put("g", "  ");
         map = CollectionUtil.filterMap(map,
                 e -> !e.getValue().trim().isEmpty());
-        assertNotNull("map is null", map);
-        assertFalse("map is empty", map.isEmpty());
-        assertEquals("map size is invalid", 5, map.size());
-        assertEquals("map element is invalid", " 5 ", map.get("e"));
+        assertAll("filter map",
+            () -> assertNotNull(map, "map is null"),
+            () -> assertFalse(map.isEmpty(), "map is empty"),
+            () -> assertEquals(5, map.size(), "map size is invalid"),
+            () -> assertEquals(" 5 ", map.get("e"), "map element is invalid"));
     }
 }

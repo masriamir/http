@@ -1,20 +1,16 @@
 package com.akm.http;
 
-import static org.hamcrest.Matchers.isA;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
 
 import org.apache.http.util.TextUtils;
-import org.junit.rules.ExpectedException;
-
-import com.akm.http.exception.HttpServiceException;
 
 /**
  * Utility class for unit testing.
@@ -37,8 +33,9 @@ public final class TestUtils {
      *            variable name used in assert message
      */
     public static void notEmpty(final Collection<?> c, final String name) {
-        assertNotNull(String.format("%s is null", name), c);
-        assertFalse(String.format("%s is empty", name), c.isEmpty());
+        assertAll(name,
+            () -> assertNotNull(c, () -> String.format("%s is null", name)),
+            () -> assertFalse(c.isEmpty(), () -> String.format("%s is empty", name)));
     }
 
     /**
@@ -50,8 +47,9 @@ public final class TestUtils {
      *            variable name used in assert message
      */
     public static void notEmpty(final Map<?, ?> m, final String name) {
-        assertNotNull(String.format("%s is null", name), m);
-        assertFalse(String.format("%s is empty", name), m.isEmpty());
+        assertAll(name,
+            () -> assertNotNull(m, () -> String.format("%s is null", name)),
+            () -> assertFalse(m.isEmpty(), () -> String.format("%s is empty", name)));
     }
 
     /**
@@ -63,7 +61,7 @@ public final class TestUtils {
      *            variable name used in assert message
      */
     public static void notBlank(final String s, final String name) {
-        assertFalse(String.format("%s is blank", name), TextUtils.isBlank(s));
+        assertFalse(TextUtils.isBlank(s), () -> String.format("%s is blank", name));
     }
 
     /**
@@ -73,10 +71,14 @@ public final class TestUtils {
      *            the HttpResponse
      */
     public static void validResponse(final HttpResponse resp) {
-        assertNotNull("response is null", resp);
-        notEmpty(resp.getHeaders(), "headers");
-        notBlank(resp.getProtocol(), "protocol");
-        notBlank(resp.getStatusMessage(), "status message");
+        assertAll("response",
+            () -> {
+                assertNotNull(resp, "response is null");
+                assertAll("valid response",
+                    () -> notEmpty(resp.getHeaders(), "headers"),
+                    () -> notBlank(resp.getProtocol(), "protocol"),
+                    () -> notBlank(resp.getStatusMessage(), "status message"));
+            });
     }
 
     /**
@@ -86,8 +88,9 @@ public final class TestUtils {
      *            the HttpResponse
      */
     public static void successResponse(final HttpResponse resp) {
-        validResponse(resp);
-        notBlank(resp.getData(), "data");
+        assertAll("success response",
+            () -> validResponse(resp),
+            () -> notBlank(resp.getData(), "data"));
     }
 
     /**
@@ -98,8 +101,9 @@ public final class TestUtils {
      *            the HttpResponse
      */
     public static void successResponseAndCode(final HttpResponse resp) {
-        successResponse(resp);
-        successStatusCode(resp.getStatusCode());
+        assertAll("success response and code",
+            () -> successResponse(resp),
+            () -> successStatusCode(resp.getStatusCode()));
     }
 
     /**
@@ -113,8 +117,9 @@ public final class TestUtils {
      */
     public static void successResponseWithCode(final HttpResponse resp,
             final int statusCode) {
-        successResponse(resp);
-        statusCode(statusCode, resp.getStatusCode());
+        assertAll("success response with code",
+            () -> successResponse(resp),
+            () -> statusCode(statusCode, resp.getStatusCode()));
     }
 
     /**
@@ -126,8 +131,9 @@ public final class TestUtils {
      *            the HttpResponse
      */
     public static void errorResponse(final HttpResponse resp) {
-        validResponse(resp);
-        assertNotNull("data is null", resp.getData());
+        assertAll("error response",
+            () -> validResponse(resp),
+            () -> assertNotNull(resp.getData(), "data is null"));
     }
 
     /**
@@ -138,8 +144,9 @@ public final class TestUtils {
      *            the HttpResponse
      */
     public static void errorResponseAndCode(final HttpResponse resp) {
-        errorResponse(resp);
-        errorStatusCode(resp.getStatusCode());
+        assertAll("error response and code",
+            () -> errorResponse(resp),
+            () -> errorStatusCode(resp.getStatusCode()));
     }
 
     /**
@@ -153,8 +160,9 @@ public final class TestUtils {
      */
     public static void errorResponseWithCode(final HttpResponse resp,
             final int statusCode) {
-        errorResponse(resp);
-        statusCode(statusCode, resp.getStatusCode());
+        assertAll("error response with code",
+            () -> errorResponse(resp),
+            () -> statusCode(statusCode, resp.getStatusCode()));
     }
 
     /**
@@ -166,8 +174,7 @@ public final class TestUtils {
      *            the actual status code
      */
     public static void statusCode(final int expected, final int actual) {
-        assertEquals(String.format("status code is not %d", expected), expected,
-                actual);
+        assertEquals(expected, actual, () -> String.format("status code is not %d", expected));
     }
 
     /**
@@ -177,7 +184,7 @@ public final class TestUtils {
      *            the status code
      */
     public static void successStatusCode(final int statusCode) {
-        assertTrue("success code expected", statusCode < 400);
+        assertTrue(statusCode < 400, "success code expected");
     }
 
     /**
@@ -187,7 +194,7 @@ public final class TestUtils {
      *            the status code
      */
     public static void errorStatusCode(final int statusCode) {
-        assertTrue("error code expected", statusCode >= 400);
+        assertTrue(statusCode >= 400, "error code expected");
     }
 
     /**
@@ -200,8 +207,7 @@ public final class TestUtils {
      */
     public static void containsHeader(final HttpResponse resp,
             final String header) {
-        assertTrue(String.format("header %s missing from response", header),
-                resp.getHeaders().containsKey(header));
+        assertTrue(resp.getHeaders().containsKey(header), () -> String.format("header %s missing from response", header));
     }
 
     /**
@@ -217,9 +223,9 @@ public final class TestUtils {
      */
     public static void containsHeaderWithValue(final HttpResponse resp,
             final String header, final String value) {
-        containsHeader(resp, header);
-        assertEquals(String.format("header %s does not have value %s", header,
-                value), value, resp.getHeaders().get(header));
+        assertAll("header with value",
+            () -> containsHeader(resp, header),
+            () -> assertEquals(value, resp.getHeaders().get(header), () -> String.format("header %s does not have value %s", header, value)));
     }
 
     /**
@@ -228,10 +234,10 @@ public final class TestUtils {
      * @param e
      *            the ExpectedException
      */
-    public static void nullUrlException(final ExpectedException e) {
-        e.expect(HttpServiceException.class);
-        e.expectMessage(startsWith("unable to instantiate class"));
-        e.expectCause(isA(InvocationTargetException.class));
+    public static void nullUrlException(final Exception e) {
+        assertAll("null url exception",
+            () -> assertTrue(e.getMessage().startsWith("unable to instantiate class")),
+            () -> assertEquals(InvocationTargetException.class, e.getCause().getClass()));
     }
 
     private TestUtils() {}
