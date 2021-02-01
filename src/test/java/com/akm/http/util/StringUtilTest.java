@@ -9,20 +9,21 @@ import org.junit.jupiter.api.Test;
 /**
  * Provides test cases for the StringUtil class.
  *
- * @since 0.7
  * @author Amir
+ * @since 0.7
  */
 public class StringUtilTest {
-    @Test
-    public final void testCapitalize() {
-        assertAll("capitalize",
-            () -> assertEquals("Dog", StringUtil.capitalize("dog")),
-            () -> assertEquals("Dog cat", StringUtil.capitalize("dog cat")),
-            () -> assertEquals("  dog cat", StringUtil.capitalize("  dog cat")));
-    }
 
-    @Test
-    public final void testCapitalizeException() {
-        assertThrows(IllegalArgumentException.class, () -> StringUtil.capitalize(""));
-    }
+  @Test
+  public final void testCapitalize() {
+    assertAll("capitalize",
+        () -> assertEquals("Dog", StringUtil.capitalize("dog")),
+        () -> assertEquals("Dog cat", StringUtil.capitalize("dog cat")),
+        () -> assertEquals("  dog cat", StringUtil.capitalize("  dog cat")));
+  }
+
+  @Test
+  public final void testCapitalizeException() {
+    assertThrows(IllegalArgumentException.class, () -> StringUtil.capitalize(""));
+  }
 }
