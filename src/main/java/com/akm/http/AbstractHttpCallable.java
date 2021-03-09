@@ -14,11 +14,13 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.Args;
 import org.apache.http.util.EntityUtils;
+import org.apache.http.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +55,8 @@ abstract class AbstractHttpCallable
    */
   private final Map<String, String> parameters;
 
+  private final String body;
+
   /**
    * The HTTP method name.
    */
@@ -60,10 +64,11 @@ abstract class AbstractHttpCallable
 
   public AbstractHttpCallable(final String url,
       final Map<String, String> headers,
-      final Map<String, String> parameters, final String method) {
+      final Map<String, String> parameters, final String body, final String method) {
     this.url = Args.notBlank(url, "url");
     this.headers = headers;
     this.parameters = parameters;
+    this.body = body;
     this.method = Args.notBlank(method, "method");
   }
 
@@ -134,6 +139,8 @@ abstract class AbstractHttpCallable
                   e.getValue()))
               .collect(Collectors.toList()),
           StandardCharsets.UTF_8));
+    } else if (!TextUtils.isBlank(body)) {
+      request.setEntity(new StringEntity(body, StandardCharsets.UTF_8));
     }
   }
 
@@ -164,6 +171,10 @@ abstract class AbstractHttpCallable
 
   protected Map<String, String> getParameters() {
     return parameters;
+  }
+
+  protected String getBody() {
+    return body;
   }
 
   protected String getMethod() {

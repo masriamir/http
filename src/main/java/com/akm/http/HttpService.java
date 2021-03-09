@@ -36,7 +36,7 @@ public final class HttpService {
    */
   public HttpResponse get(final String url, final Map<String, String> headers,
       final Map<String, String> parameters) throws HttpServiceException {
-    return doRequest(HttpGetCallable.class, url, headers, parameters);
+    return doRequest(HttpGetCallable.class, url, headers, parameters, null);
   }
 
   /**
@@ -54,7 +54,7 @@ public final class HttpService {
   public HttpResponse delete(final String url,
       final Map<String, String> headers,
       final Map<String, String> parameters) throws HttpServiceException {
-    return doRequest(HttpDeleteCallable.class, url, headers, parameters);
+    return doRequest(HttpDeleteCallable.class, url, headers, parameters, null);
   }
 
   /**
@@ -72,7 +72,7 @@ public final class HttpService {
   public HttpResponse head(final String url,
       final Map<String, String> headers,
       final Map<String, String> parameters) throws HttpServiceException {
-    return doRequest(HttpHeadCallable.class, url, headers, parameters);
+    return doRequest(HttpHeadCallable.class, url, headers, parameters, null);
   }
 
   /**
@@ -90,7 +90,7 @@ public final class HttpService {
   public HttpResponse options(final String url,
       final Map<String, String> headers,
       final Map<String, String> parameters) throws HttpServiceException {
-    return doRequest(HttpOptionsCallable.class, url, headers, parameters);
+    return doRequest(HttpOptionsCallable.class, url, headers, parameters, null);
   }
 
   /**
@@ -108,7 +108,7 @@ public final class HttpService {
   public HttpResponse trace(final String url,
       final Map<String, String> headers,
       final Map<String, String> parameters) throws HttpServiceException {
-    return doRequest(HttpTraceCallable.class, url, headers, parameters);
+    return doRequest(HttpTraceCallable.class, url, headers, parameters, null);
   }
 
   /**
@@ -125,8 +125,8 @@ public final class HttpService {
    */
   public HttpResponse post(final String url,
       final Map<String, String> headers,
-      final Map<String, String> parameters) throws HttpServiceException {
-    return doRequest(HttpPostCallable.class, url, headers, parameters);
+      final Map<String, String> parameters, final String body) throws HttpServiceException {
+    return doRequest(HttpPostCallable.class, url, headers, parameters, body);
   }
 
   /**
@@ -142,8 +142,8 @@ public final class HttpService {
    * @throws HttpServiceException if any errors occur while executing the request
    */
   public HttpResponse put(final String url, final Map<String, String> headers,
-      final Map<String, String> parameters) throws HttpServiceException {
-    return doRequest(HttpPutCallable.class, url, headers, parameters);
+      final Map<String, String> parameters, final String body) throws HttpServiceException {
+    return doRequest(HttpPutCallable.class, url, headers, parameters, body);
   }
 
   /**
@@ -160,8 +160,8 @@ public final class HttpService {
    */
   public HttpResponse patch(final String url,
       final Map<String, String> headers,
-      final Map<String, String> parameters) throws HttpServiceException {
-    return doRequest(HttpPatchCallable.class, url, headers, parameters);
+      final Map<String, String> parameters, final String body) throws HttpServiceException {
+    return doRequest(HttpPatchCallable.class, url, headers, parameters, body);
   }
 
   /**
@@ -179,8 +179,8 @@ public final class HttpService {
   private <T extends AbstractHttpCallable> HttpResponse doRequest(
       final Class<T> clazz, final String url,
       final Map<String, String> headers,
-      final Map<String, String> parameters) throws HttpServiceException {
-    final T callable = getHttpCallable(clazz, url, headers, parameters);
+      final Map<String, String> parameters, final String body) throws HttpServiceException {
+    final T callable = getHttpCallable(clazz, url, headers, parameters, body);
     return execute(callable);
   }
 
@@ -235,11 +235,17 @@ public final class HttpService {
   private <T extends AbstractHttpCallable> T getHttpCallable(
       final Class<T> clazz, final String url,
       final Map<String, String> headers,
-      final Map<String, String> parameters) throws HttpServiceException {
+      final Map<String, String> parameters, final String body) throws HttpServiceException {
     try {
-      final Constructor<T> constructor = clazz
-          .getConstructor(String.class, Map.class, Map.class);
-      return constructor.newInstance(url, headers, parameters);
+      if (body == null) {
+        final Constructor<T> constructor = clazz
+            .getConstructor(String.class, Map.class, Map.class);
+        return constructor.newInstance(url, headers, parameters);
+      } else {
+        final Constructor<T> constructor = clazz
+            .getConstructor(String.class, Map.class, Map.class, String.class);
+        return constructor.newInstance(url, headers, parameters, body);
+      }
     } catch (NoSuchMethodException | SecurityException
         | InstantiationException | IllegalAccessException
         | IllegalArgumentException | InvocationTargetException e) {

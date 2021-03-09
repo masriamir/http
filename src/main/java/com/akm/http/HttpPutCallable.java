@@ -17,7 +17,12 @@ final class HttpPutCallable extends AbstractHttpCallable {
 
   public HttpPutCallable(final String url, final Map<String, String> headers,
       final Map<String, String> parameters) {
-    super(url, headers, parameters, HttpPut.METHOD_NAME);
+    this(url, headers, parameters, null);
+  }
+
+  public HttpPutCallable(final String url, final Map<String, String> headers,
+      final Map<String, String> parameters, final String body) {
+    super(url, headers, parameters, body, HttpPut.METHOD_NAME);
   }
 
   @Override

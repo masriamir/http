@@ -18,7 +18,7 @@ final class HttpTraceCallable extends AbstractHttpCallable {
   public HttpTraceCallable(final String url,
       final Map<String, String> headers,
       final Map<String, String> parameters) {
-    super(url, headers, parameters, HttpTrace.METHOD_NAME);
+    super(url, headers, parameters, null, HttpTrace.METHOD_NAME);
   }
 
   @Override
