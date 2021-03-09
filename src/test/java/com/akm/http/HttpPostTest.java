@@ -100,7 +100,7 @@ public class HttpPostTest {
    * @throws HttpServiceException if any errors occur while executing the request
    */
   private HttpResponse post(final String url) throws HttpServiceException {
-    return http.post(url, headers, parameters);
+    return http.post(url, headers, parameters, null);
   }
 
   private HttpResponse post() throws HttpServiceException {

@@ -17,7 +17,7 @@ final class HttpGetCallable extends AbstractHttpCallable {
 
   public HttpGetCallable(final String url, final Map<String, String> headers,
       final Map<String, String> parameters) {
-    super(url, headers, parameters, HttpGet.METHOD_NAME);
+    super(url, headers, parameters, null, HttpGet.METHOD_NAME);
   }
 
   @Override

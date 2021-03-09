@@ -17,7 +17,12 @@ final class HttpPostCallable extends AbstractHttpCallable {
 
   public HttpPostCallable(final String url, final Map<String, String> headers,
       final Map<String, String> parameters) {
-    super(url, headers, parameters, HttpPost.METHOD_NAME);
+    this(url, headers, parameters, null);
+  }
+
+  public HttpPostCallable(final String url, final Map<String, String> headers,
+      final Map<String, String> parameters, final String body) {
+    super(url, headers, parameters, body, HttpPost.METHOD_NAME);
   }
 
   @Override

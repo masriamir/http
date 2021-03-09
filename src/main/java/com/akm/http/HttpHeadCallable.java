@@ -17,7 +17,7 @@ final class HttpHeadCallable extends AbstractHttpCallable {
 
   public HttpHeadCallable(final String url, final Map<String, String> headers,
       final Map<String, String> parameters) {
-    super(url, headers, parameters, HttpHead.METHOD_NAME);
+    super(url, headers, parameters, null, HttpHead.METHOD_NAME);
   }
 
   @Override

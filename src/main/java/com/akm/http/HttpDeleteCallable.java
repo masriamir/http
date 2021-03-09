@@ -18,7 +18,7 @@ final class HttpDeleteCallable extends AbstractHttpCallable {
   public HttpDeleteCallable(final String url,
       final Map<String, String> headers,
       final Map<String, String> parameters) {
-    super(url, headers, parameters, HttpDelete.METHOD_NAME);
+    super(url, headers, parameters, null, HttpDelete.METHOD_NAME);
   }
 
   @Override

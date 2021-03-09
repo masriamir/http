@@ -18,7 +18,13 @@ final class HttpPatchCallable extends AbstractHttpCallable {
   public HttpPatchCallable(final String url,
       final Map<String, String> headers,
       final Map<String, String> parameters) {
-    super(url, headers, parameters, HttpPatch.METHOD_NAME);
+    this(url, headers, parameters, null);
+  }
+
+  public HttpPatchCallable(final String url,
+      final Map<String, String> headers,
+      final Map<String, String> parameters, final String body) {
+    super(url, headers, parameters, body, HttpPatch.METHOD_NAME);
   }
 
   @Override

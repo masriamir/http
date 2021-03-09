@@ -18,7 +18,7 @@ final class HttpOptionsCallable extends AbstractHttpCallable {
   public HttpOptionsCallable(final String url,
       final Map<String, String> headers,
       final Map<String, String> parameters) {
-    super(url, headers, parameters, HttpOptions.METHOD_NAME);
+    super(url, headers, parameters, null, HttpOptions.METHOD_NAME);
   }
 
   @Override
