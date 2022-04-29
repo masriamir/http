@@ -9,7 +9,7 @@ import org.apache.http.util.Args;
 /**
  * This class represents an HTTP response.
  * <p>
- * The response headers, status line related info, and the response data are all accesible through
+ * The response headers, status line related info, and the response data are all accessible through
  * the object.
  *
  * @author Amir
