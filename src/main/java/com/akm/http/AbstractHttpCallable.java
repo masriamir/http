@@ -76,7 +76,7 @@ abstract class AbstractHttpCallable
   public HttpResponse call() throws Exception {
     final CloseableHttpClient client = HttpClients.createDefault();
     CloseableHttpResponse resp = null;
-    HttpResponse response = null;
+    HttpResponse response;
     String data = null;
 
     // send the request
@@ -108,7 +108,10 @@ abstract class AbstractHttpCallable
       LOGGER.error("error sending http request", e);
       throw e;
     } finally {
-      resp.close();
+      if (resp != null) {
+        resp.close();
+      }
+
       client.close();
     }
 
