@@ -34,19 +34,24 @@ public @interface RequestParameter {
 
   /**
    * The request parameter name.
+   *
+   * @return the name of the parameter
    */
   String value();
 
   /**
-   * Whether the parameter is required to have data. By default this is set to
+   * Whether the parameter is required to have data. By default, this is set to
    * <code>false</code>.
+   *
+   * @return <code>true</code> if the parameter is required, <code>false</code> otherwise
    */
   boolean required() default false;
 
   /**
-   * The adapter class to convert the request parameter value. By default the
+   * The adapter class to convert the request parameter value. By default, the
    * <code>toString()</code> method of the Object is used.
+   *
+   * @return the <code>RequestParameterAdapter</code> class
    */
-  @SuppressWarnings("rawtypes")
   Class<? extends RequestParameterAdapter> adapter() default DummyRequestParameterAdapter.class;
 }

@@ -21,6 +21,8 @@ public final class CollectionUtil {
    * @param filter     the Predicate to filter the Collection with
    *
    * @return the filtered Collection
+   *
+   * @param <T> the type of elements in this collection
    */
   public static <T> Collection<T> filterCollection(
       final Collection<T> collection, final Predicate<T> filter) {
@@ -36,6 +38,9 @@ public final class CollectionUtil {
    * @param filter the Predicate to filter the Map with
    *
    * @return the filtered Map
+   *
+   * @param <K> the type of keys maintained by this map
+   * @param <V> the type of mapped values
    */
   public static <K, V> Map<K, V> filterMap(final Map<K, V> map,
       final Predicate<Map.Entry<K, V>> filter) {

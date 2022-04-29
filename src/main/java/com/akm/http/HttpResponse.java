@@ -1,15 +1,17 @@
 package com.akm.http;
 
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.message.StatusLine;
+import org.apache.hc.core5.util.Args;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.http.Header;
-import org.apache.http.StatusLine;
-import org.apache.http.util.Args;
+import java.util.Objects;
 
 /**
  * This class represents an HTTP response.
  * <p>
- * The response headers, status line related info, and the response data are all accesible through
+ * The response headers, status line related info, and the response data are all accessible through
  * the object.
  *
  * @author Amir
@@ -24,9 +26,9 @@ public final class HttpResponse {
   private final String data;
 
   HttpResponse(final Header[] headers, final StatusLine statusLine,
-      final String data) {
-    Args.notNull(headers, "headers");
-    Args.notNull(statusLine, "status line");
+               final String data) {
+    Objects.requireNonNull(headers, "headers");
+    Objects.requireNonNull(statusLine, "status line");
 
     // set header info
     this.headers = new HashMap<>();
@@ -66,22 +68,47 @@ public final class HttpResponse {
     return headers.get(name);
   }
 
+  /**
+   * Returns the map of response headers.
+   *
+   * @return the map of headers
+   */
   public Map<String, String> getHeaders() {
     return headers;
   }
 
+  /**
+   * Returns the status code of the response.
+   *
+   * @return the status code
+   */
   public int getStatusCode() {
     return statusCode;
   }
 
+  /**
+   * Returns the status message of the response.
+   *
+   * @return the status message
+   */
   public String getStatusMessage() {
     return statusMessage;
   }
 
+  /**
+   * Returns the protocol used.
+   *
+   * @return the protocol
+   */
   public String getProtocol() {
     return protocol;
   }
 
+  /**
+   * Returns the response data as a string.
+   *
+   * @return the data
+   */
   public String getData() {
     return data;
   }

@@ -1,8 +1,9 @@
 package com.akm.http;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+
 import java.io.IOException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * Internal interface for executing HTTP requests.

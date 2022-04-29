@@ -1,5 +1,7 @@
 package com.akm.http;
 
+import org.apache.hc.core5.util.TextUtils;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -9,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
-import org.apache.http.util.TextUtils;
 
 /**
  * Utility class for unit testing.

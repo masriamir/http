@@ -26,6 +26,7 @@ public final class BeanUtil {
    * @param objs     the array of AccessibleObjects
    * @param filter   the Predicate used to filter the array
    * @param consumer the Consumer to apply to each element
+   * @param <T> the type of the input object
    */
   public static <T extends AccessibleObject> void iterator(final T[] objs,
       final Predicate<T> filter, final Consumer<T> consumer) {
@@ -40,6 +41,10 @@ public final class BeanUtil {
    * @param collector the Collector to use for reducing the elements
    *
    * @return the result of the reduction
+   *
+   * @param <T> the type of the input object
+   * @param <A> the mutable accumulation type of the reduction operation
+   * @param <R> the result type of the reduction operation
    */
   public static <T extends AccessibleObject, A, R> R collector(final T[] objs,
       final Predicate<T> filter, final Collector<T, A, R> collector) {
@@ -194,10 +199,10 @@ public final class BeanUtil {
    *
    * @return the result of invoking the Method
    *
-   * @throws IllegalAccessException
-   * @throws IllegalArgumentException
-   * @throws InvocationTargetException
-   * @throws IntrospectionException
+   * @throws IllegalAccessException if this Method object is enforcing Java language access control and the underlying method is inaccessible
+   * @throws IllegalArgumentException if the method is an instance method and the specified object argument is not an instance of the class or interface declaring the underlying method (or of a subclass or implementor thereof); if the number of actual and formal parameters differ; if an unwrapping conversion for primitive arguments fails; or if, after possible unwrapping, a parameter value cannot be converted to the corresponding formal parameter type by a method invocation conversion
+   * @throws InvocationTargetException if the underlying method throws an exception
+   * @throws IntrospectionException if there are any errors during introspection
    */
   public static Object invokeGetter(final String field, final Class<?> clazz,
       final Object obj, final Object... args)
@@ -217,10 +222,10 @@ public final class BeanUtil {
    *
    * @return the result of invoking the Method
    *
-   * @throws IllegalAccessException
-   * @throws IllegalArgumentException
-   * @throws InvocationTargetException
-   * @throws IntrospectionException
+   * @throws IllegalAccessException if this Method object is enforcing Java language access control and the underlying method is inaccessible
+   * @throws IllegalArgumentException if the method is an instance method and the specified object argument is not an instance of the class or interface declaring the underlying method (or of a subclass or implementor thereof); if the number of actual and formal parameters differ; if an unwrapping conversion for primitive arguments fails; or if, after possible unwrapping, a parameter value cannot be converted to the corresponding formal parameter type by a method invocation conversion
+   * @throws InvocationTargetException if the underlying method throws an exception
+   * @throws IntrospectionException if there are any errors during introspection
    */
   public static Object invokeGetterReadOnly(final String field,
       final Class<?> clazz, final Object obj, final Object... args)
@@ -240,10 +245,10 @@ public final class BeanUtil {
    *
    * @return the result of invoking the Method
    *
-   * @throws IllegalAccessException
-   * @throws IllegalArgumentException
-   * @throws InvocationTargetException
-   * @throws IntrospectionException
+   * @throws IllegalAccessException if this Method object is enforcing Java language access control and the underlying method is inaccessible
+   * @throws IllegalArgumentException if the method is an instance method and the specified object argument is not an instance of the class or interface declaring the underlying method (or of a subclass or implementor thereof); if the number of actual and formal parameters differ; if an unwrapping conversion for primitive arguments fails; or if, after possible unwrapping, a parameter value cannot be converted to the corresponding formal parameter type by a method invocation conversion
+   * @throws InvocationTargetException if the underlying method throws an exception
+   * @throws IntrospectionException if there are any errors during introspection
    */
   public static Object invokeSetter(final String field, final Class<?> clazz,
       final Object obj, final Object... args)
@@ -263,10 +268,10 @@ public final class BeanUtil {
    *
    * @return the result of invoking the Method
    *
-   * @throws IllegalAccessException
-   * @throws IllegalArgumentException
-   * @throws InvocationTargetException
-   * @throws IntrospectionException
+   * @throws IllegalAccessException if this Method object is enforcing Java language access control and the underlying method is inaccessible
+   * @throws IllegalArgumentException if the method is an instance method and the specified object argument is not an instance of the class or interface declaring the underlying method (or of a subclass or implementor thereof); if the number of actual and formal parameters differ; if an unwrapping conversion for primitive arguments fails; or if, after possible unwrapping, a parameter value cannot be converted to the corresponding formal parameter type by a method invocation conversion
+   * @throws InvocationTargetException if the underlying method throws an exception
+   * @throws IntrospectionException if there are any errors during introspection
    */
   public static Object invokeSetterWriteOnly(final String field,
       final Class<?> clazz, final Object obj, final Object... args)

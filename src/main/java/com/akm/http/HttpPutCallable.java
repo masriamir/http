@@ -1,10 +1,11 @@
 package com.akm.http;
 
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+
 import java.io.IOException;
 import java.util.Map;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * Use this class to send Http PUT requests.
@@ -17,7 +18,12 @@ final class HttpPutCallable extends AbstractHttpCallable {
 
   public HttpPutCallable(final String url, final Map<String, String> headers,
       final Map<String, String> parameters) {
-    super(url, headers, parameters, HttpPut.METHOD_NAME);
+    this(url, headers, parameters, null);
+  }
+
+  public HttpPutCallable(final String url, final Map<String, String> headers,
+      final Map<String, String> parameters, final String body) {
+    super(url, headers, parameters, body, HttpPut.METHOD_NAME);
   }
 
   @Override

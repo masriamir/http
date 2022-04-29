@@ -1,10 +1,11 @@
 package com.akm.http;
 
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+
 import java.io.IOException;
 import java.util.Map;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * Use this class to send Http DELETE requests.
@@ -18,7 +19,7 @@ final class HttpDeleteCallable extends AbstractHttpCallable {
   public HttpDeleteCallable(final String url,
       final Map<String, String> headers,
       final Map<String, String> parameters) {
-    super(url, headers, parameters, HttpDelete.METHOD_NAME);
+    super(url, headers, parameters, null, HttpDelete.METHOD_NAME);
   }
 
   @Override

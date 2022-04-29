@@ -3,6 +3,8 @@ package com.akm.http.request;
 import com.akm.http.exception.HttpRequestTranslationException;
 import com.akm.http.util.BeanUtil;
 import com.akm.http.util.CollectionUtil;
+import org.apache.hc.core5.util.TextUtils;
+
 import java.beans.IntrospectionException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -11,7 +13,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import org.apache.http.util.TextUtils;
 
 /**
  * Interface used to provide a way for objects to translate their fields to request parameters. By
@@ -68,7 +69,7 @@ public interface RequestObject {
       try {
         final RequestParameter parameter = field
             .getAnnotation(RequestParameter.class);
-        Object obj = null;
+        Object obj;
         String value = null;
 
         if (Modifier.isPublic(field.getModifiers())) {
@@ -87,7 +88,7 @@ public interface RequestObject {
 
         if (obj != null) {
           // use adapter to convert parameter value
-          value = parameter.adapter().newInstance().convert(obj);
+          value = parameter.adapter().getDeclaredConstructor().newInstance().convert(obj);
         }
 
         final boolean blankValue = TextUtils.isBlank(value);
@@ -100,9 +101,8 @@ public interface RequestObject {
         } else {
           return "";
         }
-      } catch (IntrospectionException | IllegalAccessException
-          | IllegalArgumentException | InvocationTargetException
-          | InstantiationException e) {
+      } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException |
+               InstantiationException | NoSuchMethodException e) {
         throw new HttpRequestTranslationException(
             "unable to translate request parameter fields", e);
       }
