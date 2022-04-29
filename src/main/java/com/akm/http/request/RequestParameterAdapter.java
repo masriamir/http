@@ -13,6 +13,9 @@ import com.akm.http.exception.HttpRequestTranslationException;
  */
 public abstract class RequestParameterAdapter<T> {
 
+  /**
+   * Constructs a new <code>RequestParameterAdapter</code>.
+   */
   protected RequestParameterAdapter() {
   }
 

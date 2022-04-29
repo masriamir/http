@@ -68,22 +68,47 @@ public final class HttpResponse {
     return headers.get(name);
   }
 
+  /**
+   * Returns the map of response headers.
+   *
+   * @return the map of headers
+   */
   public Map<String, String> getHeaders() {
     return headers;
   }
 
+  /**
+   * Returns the status code of the response.
+   *
+   * @return the status code
+   */
   public int getStatusCode() {
     return statusCode;
   }
 
+  /**
+   * Returns the status message of the response.
+   *
+   * @return the status message
+   */
   public String getStatusMessage() {
     return statusMessage;
   }
 
+  /**
+   * Returns the protocol used.
+   *
+   * @return the protocol
+   */
   public String getProtocol() {
     return protocol;
   }
 
+  /**
+   * Returns the response data as a string.
+   *
+   * @return the data
+   */
   public String getData() {
     return data;
   }
