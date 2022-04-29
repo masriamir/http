@@ -202,7 +202,7 @@ public final class HttpService {
     final Future<HttpResponse> future = executor.submit(callable);
     executor.shutdown();
 
-    HttpResponse resp = null;
+    HttpResponse resp;
 
     try {
       resp = future.get();
@@ -254,7 +254,7 @@ public final class HttpService {
         | IllegalArgumentException | InvocationTargetException e) {
       throw new HttpServiceException(String.format(
           "unable to instantiate class %s with error %s",
-          clazz.getName(), e.toString()), e);
+          clazz.getName(), e), e);
     }
   }
 }
