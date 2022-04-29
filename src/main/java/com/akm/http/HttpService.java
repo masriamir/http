@@ -112,12 +112,13 @@ public final class HttpService {
   }
 
   /**
-   * Performs an HTTP POST request to the given url using the specified headers and parameters. If
-   * the request is successful an {@link HttpResponse} is returned.
+   * Performs an HTTP POST request to the given url using the specified headers, parameters, and body.
+   * If the request is successful an {@link HttpResponse} is returned.
    *
    * @param url        the url to send the request
    * @param headers    the map of headers for the request
    * @param parameters the map of parameters to send
+   * @param body       the request body, as a string
    *
    * @return the HttpResponse
    *
@@ -130,12 +131,13 @@ public final class HttpService {
   }
 
   /**
-   * Performs an HTTP PUT request to the given url using the specified headers and parameters. If
-   * the request is successful an {@link HttpResponse} is returned.
+   * Performs an HTTP PUT request to the given url using the specified headers, parameters, and body.
+   * If the request is successful an {@link HttpResponse} is returned.
    *
    * @param url        the url to send the request
    * @param headers    the map of headers for the request
    * @param parameters the map of parameters to send
+   * @param body       the request body, as a string
    *
    * @return the HttpResponse
    *
@@ -147,12 +149,13 @@ public final class HttpService {
   }
 
   /**
-   * Performs an HTTP PATCH request to the given url using the specified headers and parameters. If
-   * the request is successful an {@link HttpResponse} is returned.
+   * Performs an HTTP PATCH request to the given url using the specified headers, parameters, and body.
+   * If the request is successful an {@link HttpResponse} is returned.
    *
    * @param url        the url to send the request
    * @param headers    the map of headers for the request
    * @param parameters the map of parameters to send
+   * @param body       the request body, as a string
    *
    * @return the HttpResponse
    *
