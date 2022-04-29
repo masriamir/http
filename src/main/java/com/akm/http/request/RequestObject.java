@@ -68,7 +68,7 @@ public interface RequestObject {
       try {
         final RequestParameter parameter = field
             .getAnnotation(RequestParameter.class);
-        Object obj = null;
+        Object obj;
         String value = null;
 
         if (Modifier.isPublic(field.getModifiers())) {
@@ -87,7 +87,7 @@ public interface RequestObject {
 
         if (obj != null) {
           // use adapter to convert parameter value
-          value = parameter.adapter().newInstance().convert(obj);
+          value = parameter.adapter().getDeclaredConstructor().newInstance().convert(obj);
         }
 
         final boolean blankValue = TextUtils.isBlank(value);
@@ -100,9 +100,8 @@ public interface RequestObject {
         } else {
           return "";
         }
-      } catch (IntrospectionException | IllegalAccessException
-          | IllegalArgumentException | InvocationTargetException
-          | InstantiationException e) {
+      } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException |
+               InstantiationException | NoSuchMethodException e) {
         throw new HttpRequestTranslationException(
             "unable to translate request parameter fields", e);
       }
