@@ -1,7 +1,8 @@
 package com.akm.http.util;
 
+import org.apache.hc.core5.util.TextUtils;
+
 import java.util.Locale;
-import org.apache.http.util.TextUtils;
 
 /**
  * String utility functions.

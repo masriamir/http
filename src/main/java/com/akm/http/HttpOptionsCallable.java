@@ -1,10 +1,11 @@
 package com.akm.http;
 
+import org.apache.hc.client5.http.classic.methods.HttpOptions;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+
 import java.io.IOException;
 import java.util.Map;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * Use this class to send Http OPTIONS requests.

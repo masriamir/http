@@ -1,10 +1,12 @@
 package com.akm.http;
 
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.message.StatusLine;
+import org.apache.hc.core5.util.Args;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.http.Header;
-import org.apache.http.StatusLine;
-import org.apache.http.util.Args;
+import java.util.Objects;
 
 /**
  * This class represents an HTTP response.
@@ -24,9 +26,9 @@ public final class HttpResponse {
   private final String data;
 
   HttpResponse(final Header[] headers, final StatusLine statusLine,
-      final String data) {
-    Args.notNull(headers, "headers");
-    Args.notNull(statusLine, "status line");
+               final String data) {
+    Objects.requireNonNull(headers, "headers");
+    Objects.requireNonNull(statusLine, "status line");
 
     // set header info
     this.headers = new HashMap<>();

@@ -3,6 +3,8 @@ package com.akm.http.request;
 import com.akm.http.exception.HttpRequestTranslationException;
 import com.akm.http.util.BeanUtil;
 import com.akm.http.util.CollectionUtil;
+import org.apache.hc.core5.util.TextUtils;
+
 import java.beans.IntrospectionException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -11,7 +13,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import org.apache.http.util.TextUtils;
 
 /**
  * Interface used to provide a way for objects to translate their fields to request parameters. By

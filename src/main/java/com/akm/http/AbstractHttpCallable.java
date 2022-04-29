@@ -6,21 +6,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpRequest;
-import org.apache.http.StatusLine;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.Args;
-import org.apache.http.util.EntityUtils;
-import org.apache.http.util.TextUtils;
+
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.HttpEntities;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.message.StatusLine;
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.hc.core5.util.Args;
+import org.apache.hc.core5.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +84,7 @@ abstract class AbstractHttpCallable
           url);
 
       resp = execute(client);
-      final StatusLine statusLine = resp.getStatusLine();
+      final StatusLine statusLine = new StatusLine(resp);
 
       LOGGER.info("execution complete with status {}", statusLine);
 
@@ -98,7 +97,7 @@ abstract class AbstractHttpCallable
         }
 
         EntityUtils.consume(entity);
-        response = new HttpResponse(resp.getAllHeaders(), statusLine,
+        response = new HttpResponse(resp.getHeaders(), statusLine,
             data);
       } catch (final IOException e) {
         LOGGER.error("error handling http response", e);
@@ -132,32 +131,32 @@ abstract class AbstractHttpCallable
   /**
    * Adds all parameters to the given entity enclosing request.
    *
-   * @param request an {@link HttpEntityEnclosingRequest} object
+   * @param request an {@link HttpUriRequestBase} object
    */
-  protected void addPostParameters(final HttpEntityEnclosingRequest request) {
+  protected void addPostParameters(final HttpUriRequestBase request) {
     if (notEmpty(parameters)) {
-      request.setEntity(new UrlEncodedFormEntity(
+      request.setEntity(HttpEntities.createUrlEncoded(
           parameters.entrySet().parallelStream()
               .map(e -> new BasicNameValuePair(e.getKey(),
                   e.getValue()))
               .collect(Collectors.toList()),
           StandardCharsets.UTF_8));
     } else if (!TextUtils.isBlank(body)) {
-      request.setEntity(new StringEntity(body, StandardCharsets.UTF_8));
+      request.setEntity(HttpEntities.create(body, StandardCharsets.UTF_8));
     }
   }
 
   /**
    * Adds all parameters to the given request as url parameters.
    *
-   * @param request an {@link HttpRequestBase} object
+   * @param request an {@link HttpUriRequestBase} object
    */
-  protected void addRequestParameters(final HttpRequestBase request) {
+  protected void addRequestParameters(final HttpUriRequestBase request) {
     if (notEmpty(parameters)) {
       try {
         final URIBuilder uriBuilder = new URIBuilder(url);
         parameters.forEach((k, v) -> uriBuilder.setParameter(k, v));
-        request.setURI(uriBuilder.build());
+        request.setUri(uriBuilder.build());
       } catch (final URISyntaxException e) {
         LOGGER.error("unable to build uri", e);
       }
