@@ -77,6 +77,20 @@ public class HttpPostTest {
     TestUtils.successResponseAndCode(resp);
   }
 
+  @Test
+  public final void testPostBody() throws HttpServiceException {
+    final HttpResponse resp = postBody("{\"key\": \"value\"}");
+    TestUtils.successResponseAndCode(resp);
+  }
+
+  @Test
+  public final void testPostParametersAndBody() throws HttpServiceException {
+    parameters.put("a", "5");
+    parameters.put("b", "2");
+    final HttpResponse resp = postBody("{\"key\": \"value\"}");
+    TestUtils.successResponseAndCode(resp);
+  }
+
   /**
    * Makes a request guaranteed to generate the given status code and verifies the response.
    *
@@ -101,6 +115,10 @@ public class HttpPostTest {
    */
   private HttpResponse post(final String url) throws HttpServiceException {
     return http.post(url, headers, parameters, null);
+  }
+
+  private HttpResponse postBody(final String body) throws HttpServiceException {
+    return http.post(TestUtils.URL_POST, headers, parameters, body);
   }
 
   private HttpResponse post() throws HttpServiceException {

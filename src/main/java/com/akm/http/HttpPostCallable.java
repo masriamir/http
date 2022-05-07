@@ -31,6 +31,7 @@ final class HttpPostCallable extends AbstractHttpCallable {
       throws IOException {
     final HttpPost post = new HttpPost(getUrl());
     addHeaders(post);
+    addRequestParameters(post);
     addPostParameters(post);
 
     return client.execute(post);

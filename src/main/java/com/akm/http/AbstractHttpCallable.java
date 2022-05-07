@@ -124,7 +124,7 @@ abstract class AbstractHttpCallable
    */
   protected void addHeaders(final HttpRequest request) {
     if (notEmpty(headers)) {
-      headers.forEach((k, v) -> request.setHeader(k, v));
+      headers.forEach(request::setHeader);
     }
   }
 
@@ -141,7 +141,10 @@ abstract class AbstractHttpCallable
                   e.getValue()))
               .collect(Collectors.toList()),
           StandardCharsets.UTF_8));
-    } else if (!TextUtils.isBlank(body)) {
+    }
+
+    // a request body should replace any POST parameters
+    if (!TextUtils.isBlank(body)) {
       request.setEntity(HttpEntities.create(body, StandardCharsets.UTF_8));
     }
   }
@@ -155,7 +158,7 @@ abstract class AbstractHttpCallable
     if (notEmpty(parameters)) {
       try {
         final URIBuilder uriBuilder = new URIBuilder(url);
-        parameters.forEach((k, v) -> uriBuilder.setParameter(k, v));
+        parameters.forEach(uriBuilder::setParameter);
         request.setUri(uriBuilder.build());
       } catch (final URISyntaxException e) {
         LOGGER.error("unable to build uri", e);
